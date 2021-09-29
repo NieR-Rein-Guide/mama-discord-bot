@@ -1,7 +1,9 @@
 const client = require('./libs/client')
-const { emojis, formatRegex } = require('./config');
+const { emojis, formatRegex, icons } = require('./config');
 const { MessageEmbed } = require('discord.js');
 const Reference = require('./models/Reference')
+const api = require('./libs/api')
+const urlSlug = require('url-slug')
 
 client.once('ready', () => console.log('Bot is connected.'))
 
@@ -23,15 +25,27 @@ client.on('messageCreate', async (message) => {
           continue
         }
 
-        const embed = new MessageEmbed()
-          .setTitle(reference.getDataValue('alias'))
-          .setDescription(`
-            ${emojis.dark} ${emojis.sword} ${emojis.ex}
-            \n\n[nierrein.guide](https://nierrein.guide/) • [nier-calc](https://nier-calc.com/)
-          `.trim())
-          .setThumbnail('https://nierrein.guide/_next/image?url=%2Fui%2Fweapon%2Fwp001504_full.png&w=1920&q=75')
+        if (reference.getDataValue('type') === 'weapon') {
+          const { data } = await api.get('/weapon', {
+            params: {
+              id: reference.item_id
+            }
+          })
 
-        message.channel.send({ embeds: [embed] })
+          const stats = data.stats[data.stats.length - 1].maxWithAscension.base
+          const descStats = `${emojis.hp}${stats.hp} | ${emojis.atk}${stats.atk} | ${emojis.def}${stats.def}`
+
+          const embed = new MessageEmbed()
+            .setTitle(data.name.en)
+            .setDescription(`
+              ${emojis[data.attribute]} ${emojis[data.type]} ${data.isDark ? emojis.ex : ''}
+              ${data.isDark ? '' : `\n${descStats}`}
+              \n\nSee more on [nierrein.guide](https://nierrein.guide/database/weapons/${urlSlug(data.name.en)}/${data.ids.base}) • [nier-calc](https://nier-calc.com/weapon/${urlSlug(data.name.en)})
+            `.trim())
+            .setThumbnail(`https://nierrein.guide/weapons_thumbnails/wp${data.ids.asset}_thumbnail.png`)
+
+          message.channel.send({ embeds: [embed] })
+        }
       }
     }
   } catch (error) {

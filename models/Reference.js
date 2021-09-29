@@ -6,9 +6,8 @@ class Reference extends Model {}
 Reference.init({
   id: {
     type: DataTypes.INTEGER,
-    unique: true,
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: true,
   },
   alias: {
     type: DataTypes.TEXT,
@@ -18,6 +17,9 @@ Reference.init({
     type: DataTypes.TEXT,
   },
   slug: {
+    type: DataTypes.TEXT,
+  },
+  item_id: {
     type: DataTypes.TEXT,
   },
 }, {
