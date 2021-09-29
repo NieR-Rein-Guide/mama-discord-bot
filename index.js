@@ -11,7 +11,7 @@ client.on('messageCreate', async (message) => {
   try {
     const matches = [...message.content.matchAll(formatRegex)]
 
-    if (matches.length > 0 ) {
+    if (matches?.length > 0 ) {
       for (const match of matches) {
         const alias = match[0].replaceAll('[', '').replaceAll(']', '')
 
@@ -43,6 +43,22 @@ client.on('messageCreate', async (message) => {
               \n\nSee more on [nierrein.guide](https://nierrein.guide/database/weapons/${urlSlug(data.name.en)}/${data.ids.base}) • [nier-calc](https://nier-calc.com/weapon/${urlSlug(data.name.en)})
             `.trim())
             .setThumbnail(`https://nierrein.guide/weapons_thumbnails/wp${data.ids.asset}_thumbnail.png`)
+
+          message.channel.send({ embeds: [embed] })
+        }
+
+        if (reference.getDataValue('type') === 'costume') {
+          const { data } = await api.get('/costume', {
+            params: {
+              id: reference.item_id
+            }
+          })
+
+          const embed = new MessageEmbed()
+            .setTitle(`${data.character.en} - ${data.costume.name.en}`)
+            .setDescription(`See more on [nierrein.guide](https://nierrein.guide/characters/${urlSlug(data.character.en)}/${urlSlug(data.costume.name.en)}) • [nier-calc](https://nier-calc.com/unit/${urlSlug(data.costume.name.en)})
+            `.trim())
+            .setThumbnail(`https://nierrein.guide/character/thumbnails/${data.ids.actor}_thumbnail.png`)
 
           message.channel.send({ embeds: [embed] })
         }
