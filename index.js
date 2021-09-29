@@ -1,6 +1,7 @@
 const client = require('./libs/client')
 const { emojis, formatRegex } = require('./config');
 const { MessageEmbed } = require('discord.js');
+const Reference = require('./models/Reference')
 
 client.once('ready', () => console.log('Bot is connected.'))
 
@@ -10,10 +11,20 @@ client.on('messageCreate', async (message) => {
 
     if (matches.length > 0 ) {
       for (const match of matches) {
-        const reference = match[0].replaceAll('[', '').replaceAll(']', '')
+        const alias = match[0].replaceAll('[', '').replaceAll(']', '')
+
+        const reference = await Reference.findOne({ where: {
+          alias
+        }})
+
+        if (!reference) {
+          message.reply(`Sorry, the alias \`${alias}\` does not exist yet in the database. Please create it.`)
+
+          continue
+        }
 
         const embed = new MessageEmbed()
-          .setTitle(`${reference}`)
+          .setTitle(reference.getDataValue('alias'))
           .setDescription(`
             ${emojis.dark} ${emojis.sword} ${emojis.ex}
             \n\n[nierrein.guide](https://nierrein.guide/) • [nier-calc](https://nier-calc.com/)
