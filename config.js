@@ -1,5 +1,6 @@
 module.exports = {
   formatRegex: /\[[^\]\]]+\]\]/g,
+  redditGuildId: '566286327189078031',
   emojis: {
     LIGHT: '<:light:892736322115080193>',
     DARK: '<:dark:892736322299629608>',

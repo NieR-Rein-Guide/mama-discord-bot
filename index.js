@@ -1,5 +1,5 @@
 const client = require('./libs/client')
-const { emojis, formatRegex, icons } = require('./config');
+const { emojis, formatRegex, icons, redditGuildId, redditGuildAllowedRoleId } = require('./config');
 const { MessageEmbed } = require('discord.js');
 const Reference = require('./models/Reference')
 const api = require('./libs/api')
@@ -23,6 +23,10 @@ getDataset()
 client.once('ready', () => console.log('Bot is connected.'))
 
 client.on('messageCreate', async (message) => {
+  if (blacklist.has(message.author.id)) {
+    return
+  }
+
   try {
     let matches = [...message.content.matchAll(formatRegex)]
 
@@ -150,7 +154,6 @@ async function getDataset() {
 }
 
 function getWeaponEmbed(data) {
-  console.log(data)
   const stats = data.stats[data.stats.length - 1].maxWithAscension.base
   const descStats = `${emojis.hp}${stats.hp} | ${emojis.atk}${stats.atk} | ${emojis.def}${stats.def}`
 
