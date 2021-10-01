@@ -15,13 +15,20 @@ Reference.init({
   },
   type: {
     type: DataTypes.TEXT,
+    defaultValue: null,
   },
   slug: {
     type: DataTypes.TEXT,
+    defaultValue: null,
   },
   item_id: {
     type: DataTypes.TEXT,
+    defaultValue: null,
   },
+  use_count: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  }
 }, {
   sequelize,
   modelName: 'references'

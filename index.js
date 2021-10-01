@@ -5,15 +5,39 @@ const Reference = require('./models/Reference')
 const api = require('./libs/api')
 const urlSlug = require('url-slug')
 
+// Blacklist
+const blacklist = new Map()
+// Cleared every hour
+setInterval(() => {
+  blacklist.clear()
+}, 3600000)
+
 client.once('ready', () => console.log('Bot is connected.'))
 
 client.on('messageCreate', async (message) => {
   try {
-    const matches = [...message.content.matchAll(formatRegex)]
+    let matches = [...message.content.matchAll(formatRegex)]
+
+    // If the user is using too much references at once, add to temp blacklist
+    if (matches.length > 3) {
+      if (blacklist.has(message.author.id)) {
+        const count = blacklist.get(message.author.id)
+        blacklist.set(message.author.id, count + 1)
+
+        if (count >= 2) {
+          return message.reply(`${message.member}, Mama is not happy. Please don't spam the channel with too many references at once! Max is 3 per message.`)
+        }
+      } else {
+        blacklist.set(message.author.id, 0)
+      }
+
+      // Truncate the matches to 3 to avoid spam
+      matches = matches.slice(0, 3);
+    }
 
     if (matches?.length > 0 ) {
       for (const match of matches) {
-        const alias = match[0].replaceAll('[', '').replaceAll(']', '')
+        const alias = match[0].replaceAll('[', '').replaceAll(']', '').trim()
 
         const reference = await Reference.findOne({ where: {
           alias
@@ -22,8 +46,17 @@ client.on('messageCreate', async (message) => {
         if (!reference) {
           message.reply(`Sorry, the alias \`${alias}\` does not exist yet in the database. Please create it.`)
 
+          Reference.create({
+            alias,
+            use_count: 1
+          }).catch(console.error)
+          console.log(`Created reference: "${alias}"`)
+
           continue
         }
+
+        reference.use_count = reference.getDataValue('use_count') + 1
+        reference.save().catch(console.error)
 
         if (reference.getDataValue('type') === 'weapon') {
           const { data } = await api.get('/weapon', {
@@ -62,6 +95,7 @@ client.on('messageCreate', async (message) => {
 
           message.channel.send({ embeds: [embed] })
         }
+
       }
     }
   } catch (error) {
