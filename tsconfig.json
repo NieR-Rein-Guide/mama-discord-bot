@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2021",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "baseUrl": "./src",
+    "outDir": "dist",
+  },
+  "include": ["**/*.ts", "**/*.tsx", "./index.d.ts"],
+  "exclude": ["node_modules"]
+}
