@@ -27,7 +27,7 @@ getDataset()
 client.once('ready', () => console.log('Bot is connected.'))
 
 client.on('messageCreate', async (message: Message) => {
-  if (blacklist.has(message.author.id)) {
+  if (message.author.bot || blacklist.has(message.author.id)) {
     return
   }
 
@@ -57,6 +57,19 @@ client.on('messageCreate', async (message: Message) => {
       for (const match of matches) {
         const alias = match[0].replaceAll('[', '').replaceAll(']', '').trim()
 
+        // Do not support weapons yet.
+        if (alias.toLowerCase().includes('weap') || alias.toLowerCase().includes('wep')) {
+          const embed = new MessageEmbed()
+            .setTitle('Sorry, weapons are not supported yet.')
+
+            message.reply({
+            embeds: [embed]
+          })
+
+          continue
+        }
+
+        // First step is to try to find a specific reference
         const reference = await prisma.references.findFirst({
           where: {
             alias,
@@ -69,6 +82,8 @@ client.on('messageCreate', async (message: Message) => {
             const [firstResult] = costumesSearch.search(reference.item_id)
             const costume: ApiCostume = firstResult.item
             const embed = getCostumeEmbed(costume)
+
+            console.log(`${message.author.username}#${message.author.discriminator} used "${alias}" and reference "${reference.alias}" to reference ${costume.character.name} - ${costume.title}`)
 
             message.channel.send({ embeds: [embed] })
           }
@@ -87,27 +102,22 @@ client.on('messageCreate', async (message: Message) => {
 
         // If no alias has been found, try finding it with fuzzy search
         const [costumeResult] = costumesSearch.search(alias)
+
+        if (!costumeResult) {
+          console.warn(`${message.author.username}#${message.author.discriminator} used "${alias}" but yield no result.`)
+          message.reply(`I am so sorry, Mama couldn't find anything useful from \`${alias}\`.\nTry searching the costume's title like \`[[Reborn Contractor]]\` or \`[[Sickly Exile]]\``)
+
+          continue
+        }
+
         const costume: ApiCostume = costumeResult.item
         const embed = getCostumeEmbed(costume)
 
-        if (!costumeResult) {
-          message.reply(`I am so sorry, Mama couldn't find anything useful from \`${alias}\`.`)
-        }
+
+        console.log(`${message.author.username}#${message.author.discriminator} used "${alias}" to reference ${costume.character.name} - ${costume.title}`)
 
         message.channel.send({ embeds: [embed] })
         // const [weaponResult] = weaponsSearch.search(alias)
-
-        /* if (alias.includes('weap') || alias.includes('wep')) {
-          if (weaponResult) {
-            const embed = getWeaponEmbed(weaponResult.item)
-
-            message.channel.send({ embeds: [embed] })
-          } else {
-            message.reply(`I am so sorry, Mama couldn't find a weapon with the name "${alias}".`)
-          }
-
-          continue
-        } */
 
         /* if (costumeResult) {
           const embed = getCostumeEmbed(costumeResult.item)
