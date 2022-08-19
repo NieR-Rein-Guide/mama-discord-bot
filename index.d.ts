@@ -322,3 +322,13 @@ export type ApiCostume = (costume & {
   })[];
   costume_stat: costume_stat[];
 })
+
+export type ApiWeapon = (weapon & {
+  weapon_ability_link: (weapon_ability_link & {
+      weapon_ability: weapon_ability;
+  })[];
+  weapon_skill_link: (weapon_skill_link & {
+      weapon_skill: weapon_skill;
+  })[];
+  weapon_stat: weapon_stat[];
+})
