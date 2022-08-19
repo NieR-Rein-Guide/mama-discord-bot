@@ -117,7 +117,7 @@ client.on('messageCreate', async (message: Message) => {
             const weapon = weaponResult.item as ApiWeapon
             const embed = getWeaponEmbed(weapon)
 
-            console.log(`${message.author.username}#${message.author.discriminator} used "${alias}" and reference "${reference.alias}" to reference ${weapon.name}`)
+            console.log(`${message.author.username}#${message.author.discriminator} used "${alias}" to reference ${weapon.name}`)
 
             message.channel.send({ embeds: [embed] })
 
@@ -139,7 +139,7 @@ client.on('messageCreate', async (message: Message) => {
         if (firstResult.item.costume_id) {
           const costume = firstResult.item as ApiCostume
           const embed = getCostumeEmbed(costume)
-          console.log(`${message.author.username}#${message.author.discriminator} used "${alias}" and reference "${reference.alias}" to reference ${costume.character.name} - ${costume.title}`)
+          console.log(`${message.author.username}#${message.author.discriminator} used "${alias}" to reference ${costume.character.name} - ${costume.title}`)
           message.channel.send({ embeds: [embed] })
         }
         // It's a weapon
@@ -147,7 +147,7 @@ client.on('messageCreate', async (message: Message) => {
           const weapon = firstResult.item as ApiWeapon
           const embed = getWeaponEmbed(weapon)
 
-          console.log(`${message.author.username}#${message.author.discriminator} used "${alias}" and reference "${reference.alias}" to reference ${weapon.name}`)
+          console.log(`${message.author.username}#${message.author.discriminator} used "${alias}" to reference ${weapon.name}`)
 
           message.channel.send({ embeds: [embed] })
         }
