@@ -97,12 +97,13 @@ client.on('messageCreate', async (message: Message) => {
           continue
         }
 
+        // Score isn't satisfying, try searching separately
+        // 0 is perfect match, 1 is not a match
         if (firstResult.score >= 0.007) {
           const [costumeResult] = costumesSearch.search(alias)
 
           // No viable costume was found
           // trying searching for a weapon instead
-          console.log(costumeResult.score)
           if (!costumeResult || costumeResult.score >= 0.007) {
             const [weaponResult] = weaponsSearch.search(alias)
 
@@ -115,6 +116,9 @@ client.on('messageCreate', async (message: Message) => {
 
             const weapon = weaponResult.item as ApiWeapon
             const embed = getWeaponEmbed(weapon)
+
+            console.log(`${message.author.username}#${message.author.discriminator} used "${alias}" and reference "${reference.alias}" to reference ${weapon.name}`)
+
             message.channel.send({ embeds: [embed] })
 
             continue
@@ -135,12 +139,16 @@ client.on('messageCreate', async (message: Message) => {
         if (firstResult.item.costume_id) {
           const costume = firstResult.item as ApiCostume
           const embed = getCostumeEmbed(costume)
+          console.log(`${message.author.username}#${message.author.discriminator} used "${alias}" and reference "${reference.alias}" to reference ${costume.character.name} - ${costume.title}`)
           message.channel.send({ embeds: [embed] })
         }
         // It's a weapon
         else {
           const weapon = firstResult.item as ApiWeapon
           const embed = getWeaponEmbed(weapon)
+
+          console.log(`${message.author.username}#${message.author.discriminator} used "${alias}" and reference "${reference.alias}" to reference ${weapon.name}`)
+
           message.channel.send({ embeds: [embed] })
         }
 
