@@ -195,7 +195,7 @@ async function getDataset() {
 }
 
 function getWeaponEmbed(weapon: ApiWeapon) {
-  const url = `https://nierrein.guide/weapons/`
+  const url = `https://nierrein.guide/weapons/${weapon.slug}`
 
   let description = ``
 
