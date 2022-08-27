@@ -201,7 +201,7 @@ function getWeaponEmbed(weapon: ApiWeapon) {
 
   description += `Stats: ${emojis.hp} ${weapon.weapon_stat[0].hp} • ${emojis.atk} ${weapon.weapon_stat[0].atk} • ${emojis.def} ${weapon.weapon_stat[0].vit}`
 
-  description += `\n${weapon.weapon_skill_link.map(skill => `__${skill.weapon_skill.name}__ (Gauge ${skill.weapon_skill.cooldown_time})`).join('\n')}`
+  description += `\n${weapon.weapon_skill_link.map(skill => `__${skill.weapon_skill.name}__ (${skill.weapon_skill.cooldown_time / 30} sec)`).join('\n')}`
 
   description += `\nAbilities: ${weapon.weapon_ability_link.map(ability => `**${ability.weapon_ability.name}**`).join(' • ')}`
 
