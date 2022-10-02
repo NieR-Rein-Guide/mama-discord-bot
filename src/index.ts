@@ -8,7 +8,7 @@ import { PrismaClient } from '@prisma/client'
 import { Message } from 'discord.js';
 import { ApiCostume, ApiWeapon } from '..';
 
-const CDN_URL = "https://s3.eu-central-1.wasabisys.com/nierreincarnation/"
+const CDN_URL = "https://assets.nierrein.guide/"
 
 // Blacklist
 const blacklist = new Map()
