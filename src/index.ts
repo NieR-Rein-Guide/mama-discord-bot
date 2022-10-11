@@ -179,17 +179,17 @@ async function getDataset() {
   }
 
   search = new Fuse([...costumes, ...weapons], {
-    keys: ['name', 'title', 'character.name', 'costume_id', 'weapon_id'],
+    keys: ['name', 'title', 'character.name'],
     includeScore: true,
   })
 
   costumesSearch = new Fuse(costumes, {
-    keys: ['title', 'character.name', 'costume_id'],
+    keys: ['title', 'character.name'],
     includeScore: true,
   })
 
   weaponsSearch = new Fuse(weapons, {
-    keys: ['name', 'weapon_id'],
+    keys: ['name'],
     includeScore: true,
   })
 
