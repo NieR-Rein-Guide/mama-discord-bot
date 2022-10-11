@@ -174,6 +174,10 @@ async function getDataset() {
     data: ApiWeapon[]
   } = await api.get('/weapons')
 
+  if (costumes.length === 0 || weapons.length === 0) {
+    throw new Error('Costumes or Weapons are empty.')
+  }
+
   search = new Fuse([...costumes, ...weapons], {
     keys: ['name', 'title', 'character.name', 'costume_id', 'weapon_id'],
     includeScore: true,
