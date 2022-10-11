@@ -230,7 +230,12 @@ function getCostumeEmbed(costume: ApiCostume) {
 
   description += `\nSkill: __${costume.costume_skill_link[0].costume_skill.name}__ (Gauge ${costume.costume_skill_link[0].costume_skill.gauge_rise_speed})`
 
-  description += `\nAbilities: ${costume.costume_ability_link.map(ability => `**${ability.costume_ability.name}**`).join(' • ')}`
+  description += `\nAbilities: ${[...costume.costume_ability_link].splice(0, 2).map(ability => `[**${ability.costume_ability.name}**](https://nierrein.guide/ability/costume/${urlSlug(ability.costume_ability.name)}-${ability.costume_ability.ability_id})`).join(' • ')}`
+
+  if (costume.costume_ability_link[2]) {
+    const awakeningAbility = costume.costume_ability_link[2]
+    description += `\nAwakening Ability: ${`[**${awakeningAbility.costume_ability.name}**](${urlSlug(awakeningAbility.costume_ability.name)}-${awakeningAbility.costume_ability.ability_id})`}`
+  }
 
   const embed = new MessageEmbed()
     .setTitle(`${emojis[costume.weapon_type]} ${costume.character.name} - ${costume.title} (${new Array(RARITY[costume.rarity]).fill('★').join('')})`)
