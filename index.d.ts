@@ -1,3 +1,5 @@
+import { ApplicationCommandOptionChoiceData, CommandInteraction } from "discord.js"
+
 /**
  * Model character
  *
@@ -342,5 +344,6 @@ export interface BaseDiscordCommand {
   data?: SlashCommandBuilder | any
 
   run(...args): Promise<Message | Message[] | void>
+  autocomplete?(...args): Promise<any>
   handleSelect?(...args): Promise<void | Message>
 }

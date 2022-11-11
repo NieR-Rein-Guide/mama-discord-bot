@@ -6,13 +6,15 @@ import client from './libs/client'
 
 // Commands
 import {
-  Help
+  Help,
+  Costume,
 } from './commands'
 
 const bot = new Bot(client, env.DISCORD_BOT_TOKEN)
 
 bot
   .addCommand(new Help())
+  .addCommand(new Costume())
   .run()
 
 process.on('unhandledRejection', (error) => {

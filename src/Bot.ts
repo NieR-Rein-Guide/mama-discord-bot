@@ -58,7 +58,12 @@ export default class Bot {
     if (!command) return console.warn(`Could not find "${interaction.commandName} command.`)
 
     try {
-      await command.run(interaction)
+      console.log(interaction.isAutocomplete())
+      if (interaction.isAutocomplete()) {
+        await command.autocomplete(interaction)
+      } else {
+        await command.run(interaction)
+      }
     } catch (error) {
       console.error(`[ERROR][${interaction.commandName}}]`, error, interaction)
       interaction.reply({
