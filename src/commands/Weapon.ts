@@ -2,6 +2,7 @@ import { SlashCommandBuilder } from '@discordjs/builders'
 import { AutocompleteInteraction, ChatInputCommandInteraction } from 'discord.js'
 import getWeaponEmbed from '../utils/getWeaponEmbed'
 import { ApiWeapon, BaseDiscordCommand, BotIndexes } from '../..'
+import { RARITY, WEAPON_TYPE_WORDS } from '../config'
 
 export default class Weapon implements BaseDiscordCommand {
   data = new SlashCommandBuilder()
@@ -25,7 +26,7 @@ export default class Weapon implements BaseDiscordCommand {
     const focusedValue = interaction.options.getFocused();
     const choices = this.index.search(focusedValue)
       .map(item => item.item)
-      .map(choice => ({ name: choice.name, value: choice.slug }))
+      .map(choice => ({ name: `[${WEAPON_TYPE_WORDS[choice.weapon_type]}] -${choice.is_ex_weapon ? 'EX' : ''} ${choice.name} (${new Array(RARITY[choice.rarity]).fill('★').join('')})`, value: choice.slug }))
       .slice(0, 10)
 
     await interaction.respond(choices);

@@ -41,3 +41,12 @@ export const WEAPON_TYPE = {
   STAFF: 'https://nierrein.guide/icons/weapons/staff.png',
   GUN: 'https://nierrein.guide/icons/weapons/gun.png',
 }
+
+export const WEAPON_TYPE_WORDS = {
+  SWORD: '1H Sword',
+  BIG_SWORD: '2H Sword',
+  SPEAR: 'Spear',
+  FIST: 'Fist',
+  STAFF: 'Staff',
+  GUN: 'Gun',
+}

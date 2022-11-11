@@ -1,7 +1,8 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { AutocompleteInteraction, ChatInputCommandInteraction, CommandInteraction } from 'discord.js'
+import { AutocompleteInteraction, ChatInputCommandInteraction } from 'discord.js'
 import getCostumeEmbed from '../utils/getCostumeEmbed'
 import { ApiCostume, BaseDiscordCommand, BotIndexes } from '../..'
+import { RARITY } from '../config'
 
 export default class Costume implements BaseDiscordCommand {
   data = new SlashCommandBuilder()
@@ -25,7 +26,7 @@ export default class Costume implements BaseDiscordCommand {
     const focusedValue = interaction.options.getFocused();
     const choices = this.index.search(focusedValue)
       .map(item => item.item)
-      .map(choice => ({ name: choice.title, value: choice.slug }))
+      .map(choice => ({ name: `${choice.is_ex_costume ? 'EX ' : ''}${choice.character.name} - ${choice.title} (${new Array(RARITY[choice.rarity]).fill('★').join('')})`, value: choice.slug }))
       .slice(0, 10)
 
     await interaction.respond(choices);
