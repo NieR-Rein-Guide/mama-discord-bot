@@ -3,7 +3,7 @@ import { EmbedBuilder } from "discord.js"
 import { ApiCostume } from "../.."
 import urlSlug from 'slugg'
 
-export function getCostumeEmbed(costume: ApiCostume) {
+export default function getCostumeEmbed(costume: ApiCostume) {
   const url = `https://nierrein.guide/characters/${urlSlug(costume.character.name)}/${urlSlug(costume.title)}`
 
   let description = ``

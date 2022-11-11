@@ -4,8 +4,8 @@ import { Routes } from 'discord-api-types/v9'
 import { PrismaClient } from '@prisma/client'
 import { formatRegex } from './config'
 import { getDataset } from './libs/api'
-import { ApiCostume, ApiWeapon, BaseDiscordCommand } from '..'
-import { getCostumeEmbed } from './utils/getCostumeEmbed'
+import { ApiCostume, ApiWeapon, BaseDiscordCommand, BotIndexes } from '..'
+import getCostumeEmbed from './utils/getCostumeEmbed'
 import getWeaponEmbed from './utils/getWeaponEmbed'
 import { env } from './env'
 
@@ -17,7 +17,7 @@ export default class Bot {
 
   commands = new Collection<string, BaseDiscordCommand>()
 
-  indexes = {
+  indexes: BotIndexes = {
     search: null,
     costumesSearch: null,
     weaponsSearch: null,
@@ -51,25 +51,24 @@ export default class Bot {
    * Run a / command
    */
   onInteractionCreate = async (interaction: Interaction): Promise<void> => {
-    if (!interaction.isCommand()) return
-
-    const command = this.commands.get(interaction.commandName)
-
-    if (!command) return console.warn(`Could not find "${interaction.commandName} command.`)
-
     try {
-      console.log(interaction.isAutocomplete())
       if (interaction.isAutocomplete()) {
+        const command = this.commands.get(interaction.commandName)
         await command.autocomplete(interaction)
-      } else {
+      }
+
+      if (interaction.isCommand()) {
+        const command = this.commands.get(interaction.commandName)
         await command.run(interaction)
       }
     } catch (error) {
-      console.error(`[ERROR][${interaction.commandName}}]`, error, interaction)
-      interaction.reply({
-        content: 'Sorry, There was an unknown error. Please try again.',
-        ephemeral: true
-      })
+      console.error(error, interaction)
+      if (interaction.isCommand()) {
+        interaction.reply({
+          content: 'Sorry, There was an unknown error. Please try again.',
+          ephemeral: true
+        })
+      }
     }
   }
 
@@ -201,7 +200,7 @@ export default class Bot {
               continue
             }
 
-            const costume: ApiCostume = costumeResult.item
+            const costume: ApiCostume = costumeResult.item as ApiCostume
             const embed = getCostumeEmbed(costume)
 
 

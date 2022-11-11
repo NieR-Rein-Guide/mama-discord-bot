@@ -44,6 +44,8 @@ export async function getDataset() {
   prisma.$disconnect();
 
   return {
+    costumes,
+    weapons,
     search,
     costumesSearch,
     weaponsSearch

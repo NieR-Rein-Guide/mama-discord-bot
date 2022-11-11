@@ -8,21 +8,34 @@ import client from './libs/client'
 import {
   Help,
   Costume,
+  Weapon,
 } from './commands'
+import { getDataset } from './libs/api'
 
-const bot = new Bot(client, env.DISCORD_BOT_TOKEN)
 
-bot
-  .addCommand(new Help())
-  .addCommand(new Costume())
-  .run()
+async function main() {
+  const bot = new Bot(client, env.DISCORD_BOT_TOKEN)
 
-process.on('unhandledRejection', (error) => {
-  console.error('Unhandled rejection:', error)
-})
+  const {
+    costumes, costumesSearch,
+    weapons, weaponsSearch
+  } = await getDataset()
 
-process.on('SIGTERM', async () => {
-  console.log('SIGTERM received, exiting gracefully.')
-  bot.client.destroy()
-  process.exit()
-})
+  bot
+    .addCommand(new Help())
+    .addCommand(new Costume(costumes, costumesSearch))
+    .addCommand(new Weapon(weapons, weaponsSearch))
+    .run()
+
+    process.on('unhandledRejection', (error) => {
+      console.error('Unhandled rejection:', error)
+    })
+
+    process.on('SIGTERM', async () => {
+      console.log('SIGTERM received, exiting gracefully.')
+      bot.client.destroy()
+      process.exit()
+    })
+}
+
+main()
