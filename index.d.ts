@@ -1,3 +1,6 @@
+import { ApplicationCommandOptionChoiceData, CommandInteraction } from "discord.js"
+import Fuse from 'fuse.js'
+
 /**
  * Model character
  *
@@ -332,3 +335,22 @@ export type ApiWeapon = (weapon & {
   })[];
   weapon_stat: weapon_stat[];
 })
+
+export interface BotIndexes {
+  search: Fuse<any>
+  costumesSearch: Fuse<ApiCostume>
+  weaponsSearch: Fuse<ApiWeapon>
+}
+
+export interface BaseDiscordCommand {
+  name?: string
+  arguments?: string[]
+  description?: string
+  category?: string
+
+  data?: SlashCommandBuilder | any
+
+  run(...args): Promise<Message | Message[] | void>
+  autocomplete?(...args): Promise<any>
+  handleSelect?(...args): Promise<void | Message>
+}

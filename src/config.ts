@@ -1,5 +1,9 @@
+export const CDN_URL = "https://assets.nierrein.guide/"
+
 export const formatRegex = /\[[^\]\]]+\]\]/g
+
 export const redditGuildId = '566286327189078031'
+
 export const emojis = {
   LIGHT: '<:light:892736322115080193>',
   DARK: '<:dark:892736322299629608>',
@@ -21,12 +25,14 @@ export const emojis = {
   def: '<:def:1010285439745282138>',
   vit: '<:def:892863417491283998>'
 }
+
 export const RARITY = {
   RARE: 2,
   S_RARE: 3,
   SS_RARE: 4,
   LEGEND: 5
 };
+
 export const WEAPON_TYPE = {
   SWORD: 'https://nierrein.guide/icons/weapons/1h-sword.png',
   BIG_SWORD: 'https://nierrein.guide/icons/weapons/2h-sword.png',
@@ -34,4 +40,13 @@ export const WEAPON_TYPE = {
   FIST: 'https://nierrein.guide/icons/weapons/fist.png',
   STAFF: 'https://nierrein.guide/icons/weapons/staff.png',
   GUN: 'https://nierrein.guide/icons/weapons/gun.png',
+}
+
+export const WEAPON_TYPE_WORDS = {
+  SWORD: '1H Sword',
+  BIG_SWORD: '2H Sword',
+  SPEAR: 'Spear',
+  FIST: 'Fist',
+  STAFF: 'Staff',
+  GUN: 'Gun',
 }
