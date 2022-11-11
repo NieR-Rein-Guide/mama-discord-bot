@@ -332,3 +332,15 @@ export type ApiWeapon = (weapon & {
   })[];
   weapon_stat: weapon_stat[];
 })
+
+export interface BaseDiscordCommand {
+  name?: string
+  arguments?: string[]
+  description?: string
+  category?: string
+
+  data?: SlashCommandBuilder | any
+
+  run(...args): Promise<Message | Message[] | void>
+  handleSelect?(...args): Promise<void | Message>
+}
