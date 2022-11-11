@@ -242,7 +242,7 @@ export default class Bot {
    * Send some basic instructions on guild join
    */
   onGuildCreate = (guild: Guild): void => {
-    console.log(`${guild.name} (${guild.id}) has been added.`)
+    console.log(`${this.client.user.username} joined guild "${guild.name}" (id: ${guild.id})`)
 
     if (!guild.systemChannel) {
       return console.warn(`Could not send "guildCreate" message to ${guild.id}`)
@@ -251,8 +251,12 @@ export default class Bot {
     const embed = new EmbedBuilder()
       .setTitle('Hey besties, thank you for inviting me ! :blush:')
       .setDescription(
-        '@TODO'
+        '**How to use my services?**\n\n' +
+        '- Want to display a costume? type `/costume name` and start typing a name\n' +
+        '- A weapon? Type `/weapon name`\n' +
+        '- Or you can try your luck using [[costume or weapon name]] directly in a message! (*This might break in the future*)'
       )
+      .setThumbnail('https://cdn.discordapp.com/emojis/822205475009200128.png?size=256')
       .setFooter({
         text: 'See you in The Cage!'
       })

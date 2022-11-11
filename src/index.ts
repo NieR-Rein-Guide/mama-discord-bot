@@ -22,7 +22,6 @@ async function main() {
   } = await getDataset()
 
   bot
-    .addCommand(new Help())
     .addCommand(new Costume(costumes, costumesSearch))
     .addCommand(new Weapon(weapons, weaponsSearch))
     .run()
