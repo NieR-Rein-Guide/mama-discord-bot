@@ -1,5 +1,11 @@
 export const CDN_URL = "https://assets.nierrein.guide/"
 
+export const INVITE_LINK = 'https://discord.com/oauth2/authorize?client_id=892519460638965811&permissions=379968&scope=bot%20applications.commands'
+
+export const NRG_DISCORD_SERVER_INVITE_LINK = 'https://discord.gg/C8fB8yEGhR'
+
+export const BOT_OWNER_DISCORD_TAG = 'Keziah#6631'
+
 export const formatRegex = /\[[^\]\]]+\]\]/g
 
 export const redditGuildId = '566286327189078031'
