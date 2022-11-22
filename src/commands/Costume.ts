@@ -26,16 +26,19 @@ export default class Costume implements BaseDiscordCommand {
     const focusedValue = interaction.options.getFocused();
     const choices = this.index.search(focusedValue)
       .map(item => item.item)
-      .map(choice => ({ name: `${choice.is_ex_costume ? 'EX ' : ''}${choice.character.name} - ${choice.title} (${new Array(RARITY[choice.rarity]).fill('★').join('')})`, value: choice.slug }))
+      .map(choice => ({
+        name: `${choice.is_ex_costume ? 'EX ' : ''}${choice.character.name} - ${choice.title} (${new Array(RARITY[choice.rarity]).fill('★').join('')})`,
+        value: `${choice.costume_id}`
+      }))
       .slice(0, 10)
 
     await interaction.respond(choices);
   }
 
   async run (interaction: ChatInputCommandInteraction): Promise<void> {
-    const slug = interaction.options.getString('name')
+    const id = interaction.options.getString('name')
 
-    const costume = this.costumes.find((costume) => costume.slug === slug)
+    const costume = this.costumes.find((costume) => `${costume.costume_id}` === id)
     const embed = getCostumeEmbed(costume)
 
     interaction.reply({

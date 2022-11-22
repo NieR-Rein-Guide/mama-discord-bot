@@ -26,17 +26,21 @@ export default class Weapon implements BaseDiscordCommand {
     const focusedValue = interaction.options.getFocused();
     const choices = this.index.search(focusedValue)
       .map(item => item.item)
-      .map(choice => ({ name: `[${WEAPON_TYPE_WORDS[choice.weapon_type]}] -${choice.is_ex_weapon ? 'EX' : ''} ${choice.name} (${new Array(RARITY[choice.rarity]).fill('★').join('')})`, value: choice.slug }))
+      .map(choice => ({
+        name: `[${WEAPON_TYPE_WORDS[choice.weapon_type]}] -${choice.is_ex_weapon ? 'EX' : ''} ${choice.name} (${new Array(RARITY[choice.rarity]).fill('★').join('')})`,
+        value: `${choice.weapon_id}`
+      }))
       .slice(0, 10)
 
-    await interaction.respond(choices);
+    interaction.respond(choices)
+      .catch(() => {})
   }
 
   async run (interaction: ChatInputCommandInteraction): Promise<void> {
-    const slug = interaction.options.getString('name')
+    const id = interaction.options.getString('name')
 
-    const costume = this.costumes.find((costume) => costume.slug === slug)
-    const embed = getWeaponEmbed(costume)
+    const weapon = this.costumes.find((weapon) => `${weapon.weapon_id}` === id)
+    const embed = getWeaponEmbed(weapon)
 
     interaction.reply({
       embeds: [embed],
