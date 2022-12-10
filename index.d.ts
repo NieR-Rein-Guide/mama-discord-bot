@@ -354,3 +354,40 @@ export interface BaseDiscordCommand {
   autocomplete?(...args): Promise<any>
   handleSelect?(...args): Promise<void | Message>
 }
+
+export interface ApiTierlistItem {
+  id:                   number;
+  tier_id:              number;
+  item_id:              number;
+  position:             number;
+  tooltip:              null | string;
+  tooltip_is_important: boolean | null;
+  tiers:                Tiers;
+}
+
+export interface Tiers {
+  id:          number;
+  tierlist_id: number;
+  tier:        string;
+  position:    number;
+  description: null | string;
+  tierslists:  Tierslists;
+}
+
+export interface Tierslists {
+  tierlist_id: number;
+  title:       string;
+  description: string;
+  type:        'costumes' | 'weapons';
+  created_at:  Date;
+  slug:        string;
+  attribute:   Attribute;
+  votes:       number;
+  updated_at:  Date;
+  edit_key:    string;
+}
+
+export enum Attribute {
+  All = "all",
+}
+

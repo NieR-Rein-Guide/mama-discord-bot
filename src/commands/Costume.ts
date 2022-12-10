@@ -3,6 +3,7 @@ import { AutocompleteInteraction, ChatInputCommandInteraction } from 'discord.js
 import getCostumeEmbed from '../utils/getCostumeEmbed'
 import { ApiCostume, BaseDiscordCommand, BotIndexes } from '../..'
 import { RARITY } from '../config'
+import api from '../libs/api'
 
 export default class Costume implements BaseDiscordCommand {
   data = new SlashCommandBuilder()
@@ -39,7 +40,7 @@ export default class Costume implements BaseDiscordCommand {
     const id = interaction.options.getString('name')
 
     const costume = this.costumes.find((costume) => `${costume.costume_id}` === id)
-    const embed = getCostumeEmbed(costume)
+    const embed = await getCostumeEmbed(costume)
 
     interaction.reply({
       embeds: [embed],

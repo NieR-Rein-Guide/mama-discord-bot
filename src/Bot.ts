@@ -144,7 +144,7 @@ export default class Bot {
             if (reference.type === 'costume') {
               const [firstResult] = this.indexes.costumesSearch.search(reference.item_id)
               const costume: ApiCostume = firstResult.item
-              const embed = getCostumeEmbed(costume)
+              const embed = await getCostumeEmbed(costume)
 
               console.log(`${message.author.username}#${message.author.discriminator} used "${alias}" and reference "${reference.alias}" to reference ${costume.character.name} - ${costume.title}`)
 
@@ -202,7 +202,7 @@ export default class Bot {
             }
 
             const costume: ApiCostume = costumeResult.item as ApiCostume
-            const embed = getCostumeEmbed(costume)
+            const embed = await getCostumeEmbed(costume)
 
 
             console.log(`${message.author.username}#${message.author.discriminator} used "${alias}" to reference ${costume.character.name} - ${costume.title}`)
@@ -215,7 +215,7 @@ export default class Bot {
           // It's a costume
           if (firstResult.item.costume_id) {
             const costume = firstResult.item as ApiCostume
-            const embed = getCostumeEmbed(costume)
+            const embed = await getCostumeEmbed(costume)
             console.log(`${message.author.username}#${message.author.discriminator} used "${alias}" to reference ${costume.character.name} - ${costume.title}`)
             message.channel.send({ embeds: [embed] })
           }

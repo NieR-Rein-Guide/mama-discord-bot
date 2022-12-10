@@ -56,3 +56,11 @@ export const WEAPON_TYPE_WORDS = {
   STAFF: 'Staff',
   GUN: 'Gun',
 }
+
+/**
+ * FEATURED TIERLISTS
+ */
+ export const FEATURED_TIERLISTS = {
+  pve: [52],
+  pvp: [49, 54, 55],
+};
