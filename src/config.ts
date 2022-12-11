@@ -62,5 +62,5 @@ export const WEAPON_TYPE_WORDS = {
  */
  export const FEATURED_TIERLISTS = {
   pve: [52],
-  pvp: [49, 54, 58],
+  pvp: [49, 59, 58],
 };
