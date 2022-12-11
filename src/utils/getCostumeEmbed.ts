@@ -29,19 +29,7 @@ export default async function getCostumeEmbed(costume: ApiCostume) {
        iconURL: costume.is_ex_costume ? 'https://nierrein.guide/icons/weapons/dark.png' : WEAPON_TYPE[costume.weapon_type]
     })
     .setTimestamp(new Date(costume.release_time))
-
-  const tierlistsItemsResponse = await api.get(`/tierlists/item/${costume.costume_id}`)
-  const tierlistsItems: ApiTierlistItem[] = tierlistsItemsResponse.data
-  for (const tierlistItem of tierlistsItems) {
-    const tierlistId = tierlistItem.tiers.tierslists.tierlist_id
-    const isPve = FEATURED_TIERLISTS.pve.includes(tierlistId)
-    const isPvp = FEATURED_TIERLISTS.pvp.includes(tierlistId)
-    if (isPve || isPvp) {
-        description += `\n${isPvp ? 'PvP ': ''}${tierlistItem.tiers.tierslists.title}: **${tierlistItem.tiers.tier}**`
-    }
-  }
-
-  embed.setDescription(description.trim())
+    .setDescription(description.trim())
 
   return embed
 }
