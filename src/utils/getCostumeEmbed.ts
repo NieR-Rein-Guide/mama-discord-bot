@@ -4,7 +4,7 @@ import { ApiCostume, ApiTierlistItem } from "../.."
 import urlSlug from 'slugg'
 import api from '../libs/api'
 
-export default async function getCostumeEmbed(costume: ApiCostume) {
+export default function getCostumeEmbed(costume: ApiCostume) {
   const url = `https://nierrein.guide/characters/${urlSlug(costume.character.name)}/${urlSlug(costume.title)}`
 
   let description = ``
