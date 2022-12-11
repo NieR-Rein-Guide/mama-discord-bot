@@ -86,7 +86,7 @@ export default class Weapon implements BaseDiscordCommand {
 
     const message = await interaction.reply({
       embeds: [embeds.get('weapon_info')],
-      components: [row],
+      components: embeds.size > 1 ? [row] : []
     })
 
     const collector = message.createMessageComponentCollector({
@@ -107,7 +107,7 @@ export default class Weapon implements BaseDiscordCommand {
 
       newInteraction.update({
         embeds: [embeds.get(value)],
-        components: [row]
+        components: embeds.size > 1 ? [row] : []
       })
     })
 
