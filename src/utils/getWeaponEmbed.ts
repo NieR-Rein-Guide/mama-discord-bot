@@ -1,9 +1,9 @@
 import { CDN_URL, emojis, RARITY, WEAPON_TYPE } from "../config"
 import { EmbedBuilder } from "discord.js"
-import { ApiWeapon } from "../.."
+import { ApiCostume, ApiWeapon } from "../.."
 import urlSlug from 'slugg'
 
-export default function getWeaponEmbed(weapon: ApiWeapon) {
+export default function getWeaponEmbed(weapon: ApiWeapon, costume?: ApiCostume) {
   const url = `https://nierrein.guide/weapons/${weapon.slug}`
 
   let description = ``
@@ -13,6 +13,10 @@ export default function getWeaponEmbed(weapon: ApiWeapon) {
   description += `\n${weapon.weapon_skill_link.map(skill => `__${skill.weapon_skill.name}__ (${skill.weapon_skill.cooldown_time / 30} sec)`).join('\n')}`
 
   description += `\nAbilities: ${weapon.weapon_ability_link.map(ability => `[**${ability.weapon_ability.name}**](https://nierrein.guide/ability/weapon/${urlSlug(ability.weapon_ability.name)}-${ability.weapon_ability.ability_id})`).join(' • ')}`
+
+  if (costume) {
+    description += `\nCostume: [${costume.character.name} - ${costume.title}](https://nierrein.guide/characters/${costume.character.name}/${costume.slug})`
+  }
 
 
   const embed = new EmbedBuilder()

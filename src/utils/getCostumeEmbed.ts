@@ -1,10 +1,9 @@
-import { CDN_URL, emojis, FEATURED_TIERLISTS, RARITY, WEAPON_TYPE } from "../config"
+import { CDN_URL, emojis, RARITY, WEAPON_TYPE } from "../config"
 import { EmbedBuilder } from "discord.js"
-import { ApiCostume, ApiTierlistItem } from "../.."
+import { ApiCostume, ApiWeapon } from "../.."
 import urlSlug from 'slugg'
-import api from '../libs/api'
 
-export default function getCostumeEmbed(costume: ApiCostume) {
+export default function getCostumeEmbed(costume: ApiCostume, weapon?: ApiWeapon) {
   const url = `https://nierrein.guide/characters/${urlSlug(costume.character.name)}/${urlSlug(costume.title)}`
 
   let description = ``
@@ -18,6 +17,10 @@ export default function getCostumeEmbed(costume: ApiCostume) {
   if (costume.costume_ability_link[2]) {
     const awakeningAbility = costume.costume_ability_link[2]
     description += `\nAwakening Ability: ${`[**${awakeningAbility.costume_ability.name}**](${urlSlug(awakeningAbility.costume_ability.name)}-${awakeningAbility.costume_ability.ability_id})`}`
+  }
+
+  if (weapon) {
+    description += `\nWeapon: [${weapon.name}](https://nierrein.guide/weapons/${weapon.slug})`
   }
 
   const embed = new EmbedBuilder()

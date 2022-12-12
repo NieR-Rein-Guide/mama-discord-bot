@@ -56,25 +56,25 @@ export default class Weapon implements BaseDiscordCommand {
      * Weapon
      */
      const weapon = this.costumes.find((weapon) => `${weapon.weapon_id}` === id)
-     const weaponEmbed = getWeaponEmbed(weapon)
-    embeds.set('weapon_info', weaponEmbed)
+     const weaponCostumeData = await api.get(`/weapon/costume/${weapon.weapon_id}`)
+     const weaponCostume: ApiCostume = weaponCostumeData.data
+     const weaponEmbed = getWeaponEmbed(weapon, weaponCostume)
+
+     embeds.set('weapon_info', weaponEmbed)
 
     /**
      * Weapon
      */
-    try {
-      const weaponCostumeData = await api.get(`/weapon/costume/${weapon.weapon_id}`)
-     const weaponCostume: ApiCostume = weaponCostumeData.data
-     if (weaponCostume?.costume_id) {
-       const costumeEmbed = getCostumeEmbed(weaponCostume)
-       embeds.set('weapon_costume', costumeEmbed)
-       options.push({
-         label: this.optionsLabels.weapon_costume,
-         description: 'Weapon\'s costume stats and abilities',
-         value: 'weapon_costume',
-       })
-     }
-    } catch {}
+
+    if (weaponCostume?.costume_id) {
+      const costumeEmbed = getCostumeEmbed(weaponCostume, weapon)
+      embeds.set('weapon_costume', costumeEmbed)
+      options.push({
+        label: this.optionsLabels.weapon_costume,
+        description: 'Weapon\'s costume stats and abilities',
+        value: 'weapon_costume',
+      })
+    }
 
     const row = new ActionRowBuilder<StringSelectMenuBuilder>()
       .addComponents(
