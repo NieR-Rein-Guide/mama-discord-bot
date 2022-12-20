@@ -32,6 +32,8 @@ export const emojis = {
   vit: '<:def:892863417491283998>',
   ability: '<:ability:1054877057949110363>',
   skill: '<:skill:1054876198213255178>',
+  mamaDirect: '<:mamadirect:822205475009200128>',
+  mamaPlease: '<:mamaplease:844021547059642428>',
 }
 
 export const RARITY = {

@@ -2,7 +2,7 @@ import { Client, Collection, Guild, Interaction, Message, EmbedBuilder } from 'd
 import { REST } from '@discordjs/rest'
 import { Routes } from 'discord-api-types/v9'
 import { PrismaClient } from '@prisma/client'
-import { formatRegex } from './config'
+import { emojis, formatRegex } from './config'
 import { getDataset } from './libs/api'
 import { ApiCostume, ApiWeapon, BaseDiscordCommand, BotIndexes } from '..'
 import getCostumeEmbed from './utils/getCostumeEmbed'
@@ -24,9 +24,6 @@ export default class Bot {
     weaponsSearch: null,
   }
 
-  // Blacklist
-  blacklist = new Map()
-
   constructor (client: Client, apiKey: string) {
     this.client = client
     this.apiKey = apiKey
@@ -41,11 +38,6 @@ export default class Bot {
     this.client.on('guildDelete', this.onGuildDelete)
     this.client.on('interactionCreate', this.onInteractionCreate)
     this.client.on('messageCreate', this.messageCreate)
-
-    // Cleared every hour
-    setInterval(() => {
-      this.blacklist.clear()
-    }, 3600000)
   }
 
   /**
@@ -103,139 +95,12 @@ export default class Bot {
   }
 
   messageCreate = async (message: Message): Promise<any> => {
-    if (message.author.bot || this.blacklist.has(message.author.id)) {
-      return
-    }
+    let matches = [...message.content.matchAll(formatRegex)]
 
-    const prisma = new PrismaClient()
-
-    try {
-      let matches = [...message.content.matchAll(formatRegex)]
-
-      // If the user is using too much references at once, add to temp blacklist
-      if (matches.length > 3) {
-        if (this.blacklist.has(message.author.id)) {
-          const count = this.blacklist.get(message.author.id)
-          this.blacklist.set(message.author.id, count + 1)
-
-          if (count >= 4) {
-            return message.reply(`${message.member}, Mama is not happy. Please don't spam the channel with too many references at once! Max is 3 per message.`)
-          }
-        } else {
-          this.blacklist.set(message.author.id, 0)
-        }
-
-        // Truncate the matches to 3 to avoid spam
-        matches = matches.slice(0, 3);
-      }
-
-      if (matches?.length > 0 ) {
-        for (const match of matches) {
-          const alias = match[0].replaceAll('[', '').replaceAll(']', '').trim()
-          // First step is to try to find a specific reference
-          const reference = await prisma.references.findFirst({
-            where: {
-              alias,
-            }
-          })
-
-          // An alias has been found in the database, use it in priority
-          if (reference) {
-            if (reference.type === 'costume') {
-              const [firstResult] = this.indexes.costumesSearch.search(reference.item_id)
-              const costume: ApiCostume = firstResult.item
-              const embed = await getCostumeEmbed(costume)
-
-              console.log(`${message.author.username}#${message.author.discriminator} used "${alias}" and reference "${reference.alias}" to reference ${costume.character.name} - ${costume.title}`)
-
-              message.channel.send({ embeds: [embed] })
-            }
-
-            if (reference.type === 'weapon') {
-              const [firstResult] = this.indexes.weaponsSearch.search(reference.item_id)
-              const weapon = firstResult.item as ApiWeapon
-              const embed = getWeaponEmbed(weapon)
-
-              console.log(`${message.author.username}#${message.author.discriminator} used "${alias}" and reference "${reference.alias}" to reference ${weapon.name}`)
-
-              message.channel.send({ embeds: [embed] })
-            }
-
-            continue
-          }
-
-          // If no alias has been found, try finding it with fuzzy search
-          const [firstResult] = this.indexes.search.search(alias)
-
-          if (!firstResult) {
-            console.warn(`${message.author.username}#${message.author.discriminator} used "${alias}" but yield no result.`)
-
-            message.reply(`I am so sorry, Mama couldn't find anything useful from \`${alias}\`.\nTry searching the costume's title like \`[[Reborn Contractor]]\` or \`[[Sickly Exile]]\``)
-            continue
-          }
-
-          // Score isn't satisfying, try searching separately
-          // 0 is perfect match, 1 is not a match
-          if (firstResult.score >= 0.007) {
-            const [costumeResult] = this.indexes.costumesSearch.search(alias)
-
-            // No viable costume was found
-            // trying searching for a weapon instead
-            if (!costumeResult || costumeResult.score >= 0.007) {
-              const [weaponResult] = this.indexes.weaponsSearch.search(alias)
-
-              // No weapon either? Welp no luck.
-              if (!weaponResult) {
-                console.warn(`${message.author.username}#${message.author.discriminator} used "${alias}" but yield no result.`)
-                message.reply(`I am so sorry, Mama couldn't find anything useful from \`${alias}\`.\nTry searching the costume's title like \`[[Reborn Contractor]]\` or \`[[Sickly Exile]]\``)
-                continue
-              }
-
-              const weapon = weaponResult.item as ApiWeapon
-              const embed = getWeaponEmbed(weapon)
-
-              console.log(`${message.author.username}#${message.author.discriminator} used "${alias}" to reference ${weapon.name}`)
-
-              message.channel.send({ embeds: [embed] })
-
-              continue
-            }
-
-            const costume: ApiCostume = costumeResult.item as ApiCostume
-            const embed = await getCostumeEmbed(costume)
-
-
-            console.log(`${message.author.username}#${message.author.discriminator} used "${alias}" to reference ${costume.character.name} - ${costume.title}`)
-
-            message.channel.send({ embeds: [embed] })
-
-            continue
-          }
-
-          // It's a costume
-          if (firstResult.item.costume_id) {
-            const costume = firstResult.item as ApiCostume
-            const embed = await getCostumeEmbed(costume)
-            console.log(`${message.author.username}#${message.author.discriminator} used "${alias}" to reference ${costume.character.name} - ${costume.title}`)
-            message.channel.send({ embeds: [embed] })
-          }
-          // It's a weapon
-          else {
-            const weapon = firstResult.item as ApiWeapon
-            const embed = getWeaponEmbed(weapon)
-
-            console.log(`${message.author.username}#${message.author.discriminator} used "${alias}" to reference ${weapon.name}`)
-
-            message.channel.send({ embeds: [embed] })
-          }
-
-          continue
-        }
-      }
-    } catch (error) {
-      console.error(error)
-    } finally {
-      prisma.$disconnect();
+    if (matches?.length > 0 ) {
+      message.reply({
+        content: `I am sorry but Mama doesn't want to support message commands anymore.\n${emojis.mamaDirect} Please use either \`/costume <name> <?view>\` or \`/weapon <name> <?view>\` to view your desired costume/weapon. (:gift: bonus: You can benefit from more features by using slash commands!)\n\n Thank you for your understanding bestie! ${emojis.mamaPlease}`,
+      }).catch(() => console.warn(`Could not reply to ${message.member.user.toString()} in ${message.channelId} in guild ${message.guildId}`))
     }
   }
 
