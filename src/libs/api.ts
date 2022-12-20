@@ -1,4 +1,3 @@
-import { PrismaClient } from '@prisma/client';
 import axios from 'axios'
 import { ApiCostume, ApiWeapon } from '../..';
 import Fuse from 'fuse.js'
@@ -12,8 +11,6 @@ const api = axios.create({
 export default api
 
 export async function getDataset() {
-  const prisma = new PrismaClient()
-
   const { data: costumes }: {
     data: ApiCostume[]
   } = await api.get('/costumes')
@@ -40,8 +37,6 @@ export async function getDataset() {
     keys: ['name'],
     includeScore: true,
   })
-
-  prisma.$disconnect();
 
   return {
     costumes,

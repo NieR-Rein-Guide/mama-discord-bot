@@ -1,10 +1,11 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { ActionRowBuilder, AutocompleteInteraction, ChatInputCommandInteraction, ComponentType, StringSelectMenuBuilder } from 'discord.js'
+import { ActionRowBuilder, AutocompleteInteraction, ChatInputCommandInteraction, ComponentType, EmbedBuilder, StringSelectMenuBuilder } from 'discord.js'
 import getWeaponEmbed from '../utils/getWeaponEmbed'
 import { ApiCostume, ApiWeapon, BaseDiscordCommand, BotIndexes } from '../..'
-import { RARITY, WEAPON_TYPE_WORDS } from '../config'
+import { emojis, RARITY, WEAPON_TYPE_WORDS } from '../config'
 import api from '../libs/api'
 import getCostumeEmbed from '../utils/getCostumeEmbed'
+import urlSlug from 'slugg'
 
 export default class Weapon implements BaseDiscordCommand {
   data = new SlashCommandBuilder()
@@ -15,11 +16,21 @@ export default class Weapon implements BaseDiscordCommand {
         .setDescription('Weapon name to search for')
         .setRequired(true)
         .setAutocomplete(true))
+        .addStringOption(option =>
+          option.setName('view')
+            .setDescription('Select which information to view first')
+            .setRequired(false)
+            .addChoices(
+              { name: '⚔️ View Weapon', value: 'weapon_info' },
+              { name: '📜 View skills and abilities', value: 'weapon_skills' },
+              { name: '🧑 View Costume', value: 'weapon_costume' },
+            ))
 
   costumes: ApiWeapon[] = []
   index: BotIndexes['weaponsSearch']
   optionsLabels = {
     weapon_info: '⚔️ View Weapon',
+    weapon_skills: '📜 View skills and abilities',
     weapon_costume: '🧑 View Costume',
   }
 
@@ -43,6 +54,8 @@ export default class Weapon implements BaseDiscordCommand {
 
   async run (interaction: ChatInputCommandInteraction): Promise<void> {
     const id = interaction.options.getString('name')
+    const selectedView = interaction.options.getString('view') || 'weapon_info'
+
     const options = [
       {
         label: this.optionsLabels.weapon_info,
@@ -62,8 +75,27 @@ export default class Weapon implements BaseDiscordCommand {
 
      embeds.set('weapon_info', weaponEmbed)
 
+     /**
+     * Weapon skills
+     */
+    let weaponSkillsDescription = ''
+
+    weaponSkillsDescription += `\n\n\`Skills\`:\n${[...weapon.weapon_skill_link].splice(0, 2).map(skill => `${emojis.skill} __${skill.weapon_skill.name}__ (*${skill.weapon_skill.cooldown_time / 30}sec*)\n${skill.weapon_skill.description}`).join('\n')}`
+
+    weaponSkillsDescription += `\n\n\`Abilities\`:\n${[...weapon.weapon_ability_link].splice(0, 2).map(ability => `${emojis.ability} [**${ability.weapon_ability.name}**](https://nierrein.guide/ability/weapon/${urlSlug(ability.weapon_ability.name)}-${ability.weapon_ability.ability_id}) \n${ability.weapon_ability.description}`).join('\n')}`
+
+    const weaponSkillsEmbeds = EmbedBuilder.from(weaponEmbed)
+      .setDescription(weaponSkillsDescription)
+
+    embeds.set('weapon_skills', weaponSkillsEmbeds)
+    options.push({
+      label: this.optionsLabels.weapon_skills,
+      description: 'Weapon\'s skills',
+      value: 'weapon_skills',
+    })
+
     /**
-     * Weapon
+     * Weapon's costume
      */
 
     if (weaponCostume?.costume_id) {
@@ -85,13 +117,13 @@ export default class Weapon implements BaseDiscordCommand {
       )
 
     const message = await interaction.reply({
-      embeds: [embeds.get('weapon_info')],
+      embeds: [embeds.get(selectedView)],
       components: embeds.size > 1 ? [row] : []
     })
 
     const collector = message.createMessageComponentCollector({
       componentType: ComponentType.StringSelect,
-      time: 60 * 1000,
+      time: 60 * 1000 * 10,
     })
 
     collector.on('collect', (newInteraction) => {

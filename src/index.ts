@@ -26,16 +26,15 @@ async function main() {
     .addCommand(new Costume(costumes, costumesSearch))
     .addCommand(new Weapon(weapons, weaponsSearch))
     .run()
-
-    process.on('unhandledRejection', (error) => {
-      console.error('Unhandled rejection:', error)
-    })
-
-    process.on('SIGTERM', async () => {
-      console.log('SIGTERM received, exiting gracefully.')
-      bot.client.destroy()
-      process.exit()
-    })
 }
+
+process.on('unhandledRejection', (error) => {
+  console.error('Unhandled rejection:', error)
+})
+
+process.on('SIGTERM', async () => {
+  console.log('SIGTERM received, exiting gracefully.')
+  process.exit()
+})
 
 main()
