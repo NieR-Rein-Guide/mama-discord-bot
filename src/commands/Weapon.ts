@@ -23,6 +23,7 @@ export default class Weapon implements BaseDiscordCommand {
             .addChoices(
               { name: '⚔️ View Weapon', value: 'weapon_info' },
               { name: '📜 View skills and abilities', value: 'weapon_skills' },
+              { name: '📚 View weapon stories', value: 'weapon_stories' },
               { name: '🧑 View Costume', value: 'weapon_costume' },
             ))
 
@@ -31,6 +32,7 @@ export default class Weapon implements BaseDiscordCommand {
   optionsLabels = {
     weapon_info: '⚔️ View Weapon',
     weapon_skills: '📜 View skills and abilities',
+    weapon_stories: '📚 View weapon stories',
     weapon_costume: '🧑 View Costume',
   }
 
@@ -98,6 +100,22 @@ export default class Weapon implements BaseDiscordCommand {
       label: this.optionsLabels.weapon_skills,
       description: 'Weapon\'s skills',
       value: 'weapon_skills',
+    })
+
+    /**
+     * Weapon stories
+     */
+
+    const weaponStoriesEmbed = EmbedBuilder.from(weaponEmbed)
+
+    let weaponStoriesDescription = weapon.weapon_story_link.map((story) => `${story.weapon_story.story}`).join('\n\n')
+    weaponStoriesEmbed.setDescription(weaponStoriesDescription)
+
+    embeds.set('weapon_stories', weaponStoriesEmbed)
+    options.push({
+      label: this.optionsLabels.weapon_stories,
+      description: 'View weapon stories',
+      value: 'weapon_stories',
     })
 
     /**
