@@ -21,10 +21,11 @@ export default class Costume implements BaseDiscordCommand {
             .setDescription('Select which information to view first')
             .setRequired(false)
             .addChoices(
-              { name: 'Costume', value: 'costume_info' },
-              { name: 'Costume skills and abilities', value: 'costume_skills' },
-              { name: 'Costume weapon', value: 'costume_weapon' },
-              { name: 'Tierlist', value: 'tierlist_info' },
+              { name: '🧑 Costume', value: 'costume_info' },
+              { name: '📜Costume skills and abilities', value: 'costume_skills' },
+              { name: '⚔️ Costume weapon', value: 'costume_weapon' },
+              { name: '📊 Tierlist', value: 'tierlist_info' },
+              { name: '📚 View weapon stories', value: 'weapon_stories' },
             ))
 
   costumes: ApiCostume[] = []
@@ -33,7 +34,8 @@ export default class Costume implements BaseDiscordCommand {
     costume_info: '🧑 View Costume',
     costume_skills: '📜 View skills and abilities',
     costume_weapon: '⚔️ View Weapon',
-    tierlist_info: '📊 View Tierlist position'
+    tierlist_info: '📊 View Tierlist position',
+    costume_story: '📚 View costume story',
   }
 
   constructor(costumes: ApiCostume[], index: BotIndexes['costumesSearch']) {
@@ -100,6 +102,23 @@ export default class Costume implements BaseDiscordCommand {
       label: this.optionsLabels.costume_skills,
       description: 'Costume skill and abilities',
       value: 'costume_skills',
+    })
+
+    /**
+     * Costume story
+     */
+
+    const costumeStoryEmbed = EmbedBuilder.from(costumeEmbed)
+    costumeStoryEmbed.setDescription(
+      costume.description
+        .replaceAll('\\n', ' ')
+    )
+
+    embeds.set('costume_story', costumeStoryEmbed)
+    options.push({
+      label: this.optionsLabels.costume_story,
+      description: 'View costume story',
+      value: 'costume_story',
     })
 
     /**

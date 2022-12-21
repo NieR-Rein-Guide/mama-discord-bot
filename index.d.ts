@@ -334,6 +334,9 @@ export type ApiWeapon = (weapon & {
       weapon_skill: weapon_skill;
   })[];
   weapon_stat: weapon_stat[];
+  weapon_story_link: (weapon_story_link & {
+    weapon_story: weapon_story
+})[];
 })
 
 export interface BotIndexes {

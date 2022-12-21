@@ -108,7 +108,8 @@ export default class Weapon implements BaseDiscordCommand {
 
     const weaponStoriesEmbed = EmbedBuilder.from(weaponEmbed)
 
-    let weaponStoriesDescription = weapon.weapon_story_link.map((story) => `${story.weapon_story.story}`).join('\n\n')
+    let weaponStoriesDescription = weapon.weapon_story_link.map((story) => story.weapon_story.story.replaceAll('\\n', ' ')).join('\n\n')
+
     weaponStoriesEmbed.setDescription(weaponStoriesDescription)
 
     embeds.set('weapon_stories', weaponStoriesEmbed)
