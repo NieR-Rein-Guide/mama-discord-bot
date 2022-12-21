@@ -120,9 +120,23 @@ export default class Costume implements BaseDiscordCommand {
      * Tierlists
      */
 
-     const tierlistsItemsResponse = await api.get(`/tierlists/item/${costume.costume_id}`)
-     const tierlistsItems: ApiTierlistItem[] = tierlistsItemsResponse.data
-     if (tierlistsItems?.length > 0) {
+     const tierlistsItemsResponse = await api.get(`/tierlists/item/${costume.costume_id}`).catch(() => undefined)
+
+     const tierlistsItems: ApiTierlistItem[] = tierlistsItemsResponse?.data
+
+     const hasPinnedTierlists = tierlistsItems?.some((tierlistItem) => {
+      const tierlistId = tierlistItem.tiers.tierslists.tierlist_id
+      const isPve = FEATURED_TIERLISTS.pve.includes(tierlistId)
+      const isPvp = FEATURED_TIERLISTS.pvp.includes(tierlistId)
+
+      if (isPve || isPvp) {
+        return true
+      }
+
+      return false
+     })
+
+     if (hasPinnedTierlists) {
 
       options.push({
         label: this.optionsLabels.tierlist_info,

@@ -71,7 +71,6 @@ export default class Weapon implements BaseDiscordCommand {
      const weapon = this.costumes.find((weapon) => `${weapon.weapon_id}` === id)
      const weaponCostumeData = await api.get(`/weapon/costume/${weapon.weapon_id}`).catch(() => undefined)
      const weaponCostume: ApiCostume = weaponCostumeData?.data
-     console.log('weaponCostume', weaponCostume)
 
      // No costume found for weapon force switch to weapon_info view
      if (!weaponCostume && selectedView === 'weapon_costume') {
