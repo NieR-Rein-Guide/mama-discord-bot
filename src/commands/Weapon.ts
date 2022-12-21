@@ -54,7 +54,7 @@ export default class Weapon implements BaseDiscordCommand {
 
   async run (interaction: ChatInputCommandInteraction): Promise<void> {
     const id = interaction.options.getString('name')
-    const selectedView = interaction.options.getString('view') || 'weapon_info'
+    let selectedView = interaction.options.getString('view') || 'weapon_info'
 
     const options = [
       {
@@ -69,8 +69,15 @@ export default class Weapon implements BaseDiscordCommand {
      * Weapon
      */
      const weapon = this.costumes.find((weapon) => `${weapon.weapon_id}` === id)
-     const weaponCostumeData = await api.get(`/weapon/costume/${weapon.weapon_id}`)
-     const weaponCostume: ApiCostume = weaponCostumeData.data
+     const weaponCostumeData = await api.get(`/weapon/costume/${weapon.weapon_id}`).catch(() => undefined)
+     const weaponCostume: ApiCostume = weaponCostumeData?.data
+     console.log('weaponCostume', weaponCostume)
+
+     // No costume found for weapon force switch to weapon_info view
+     if (!weaponCostume && selectedView === 'weapon_costume') {
+      selectedView = 'weapon_info'
+     }
+
      const weaponEmbed = getWeaponEmbed(weapon, weaponCostume)
 
      embeds.set('weapon_info', weaponEmbed)
