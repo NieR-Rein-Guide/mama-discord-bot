@@ -76,7 +76,7 @@ export default class Costume implements BaseDiscordCommand {
 
     const costumeWeaponData = await api.get(`/costume/weapon/${costume.costume_id}`)
 
-    const costumeWeapon: ApiWeapon = costumeWeaponData.data
+    const costumeWeapon: ApiWeapon = costumeWeaponData?.data
     const costumeEmbed = getCostumeEmbed(costume, costumeWeapon)
     embeds.set('costume_info', costumeEmbed)
 
@@ -125,7 +125,7 @@ export default class Costume implements BaseDiscordCommand {
      * Weapon
      */
 
-    if (costumeWeapon.weapon_id) {
+    if (costumeWeapon?.weapon_id) {
       const weaponEmbed = getWeaponEmbed(costumeWeapon, costume)
       embeds.set('costume_weapon', weaponEmbed)
       options.push({
