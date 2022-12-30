@@ -74,6 +74,8 @@ export default class Costume implements BaseDiscordCommand {
      */
     const costume = this.costumes.find((costume) => `${costume.costume_id}` === id)
 
+    console.log(`${interaction.user.username}#${interaction.user.discriminator} used "/costume <${id}> <${selectedView}>" to reference ${costume?.character?.name} - ${costume?.title} [in Guild:${interaction.guild?.name}]`)
+
     const costumeWeaponData = await api.get(`/costume/weapon/${costume.costume_id}`)
 
     const costumeWeapon: ApiWeapon = costumeWeaponData?.data
@@ -207,6 +209,9 @@ export default class Costume implements BaseDiscordCommand {
           .setPlaceholder(this.optionsLabels[value])
           .addOptions(options)
       )
+
+      console.log(`${newInteraction.user.username}#${newInteraction.user.discriminator} updated existing embed "/costume <${id}> <${selectedView}>" to view ${value} - ${costume?.character?.name} - ${costume?.title} [in Guild:${newInteraction.guild?.name}]`)
+
 
       newInteraction.update({
         embeds: [embeds.get(value)],

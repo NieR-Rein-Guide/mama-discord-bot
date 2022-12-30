@@ -74,6 +74,8 @@ export default class Weapon implements BaseDiscordCommand {
      const weaponCostumeData = await api.get(`/weapon/costume/${weapon.weapon_id}`).catch(() => undefined)
      const weaponCostume: ApiCostume = weaponCostumeData?.data
 
+     console.log(`${interaction.user.username}#${interaction.user.discriminator} used "/weapon <${id}> <${selectedView}>" to reference ${weapon?.name} [in Guild:${interaction.guild?.name}]`)
+
      // No costume found for weapon force switch to weapon_info view
      if (!weaponCostume && selectedView === 'weapon_costume') {
       selectedView = 'weapon_info'
@@ -161,6 +163,8 @@ export default class Weapon implements BaseDiscordCommand {
           .setPlaceholder(this.optionsLabels[value])
           .addOptions(options)
       )
+
+      console.log(`${newInteraction.user.username}#${newInteraction.user.discriminator} updated existing embed "/weapon <${id}> <${selectedView}>" to view ${value} - ${weapon?.name} [in Guild:${newInteraction.guild?.name}]`)
 
       newInteraction.update({
         embeds: [embeds.get(value)],

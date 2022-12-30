@@ -18,4 +18,8 @@ export const env = envsafe({
     devDefault: 'http://localhost:3000/api/',
     desc: 'The API base URL with trailing slash.'
   }),
+  ERRORS_WEBHOOK_URL: url({
+    desc: 'The Discord Webhook URL to send errors to.',
+    allowEmpty: true,
+  }),
 });
