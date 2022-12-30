@@ -15,7 +15,7 @@ import { getDataset } from './libs/api'
 import { EmbedBuilder } from '@discordjs/builders'
 
 const webhookClient = new WebhookClient({
-  url: 'https://discord.com/api/webhooks/1058200519950209085/cqvlmo7lP_IGMqMxKfcWac-xyhvgQevvz8YaBDDxBSiKW1qZr8GwXNJd298v4HPsKMyC'
+  url: env.ERRORS_WEBHOOK_URL
 })
 
 async function main() {
