@@ -72,7 +72,12 @@ export default class Costume implements BaseDiscordCommand {
     /**
      * Costume
      */
-    const costume = this.costumes.find((costume) => `${costume.costume_id}` === id)
+    let costume = this.costumes.find((costume) => `${costume.costume_id}` === id)
+
+    if (!costume) {
+      const [firstResult] = this.index.search(id)
+      costume = firstResult.item as ApiCostume
+    }
 
     console.log(`${interaction.user.username}#${interaction.user.discriminator} used "/costume <${id}> <${selectedView}>" to reference ${costume?.character?.name} - ${costume?.title} [in Guild:${interaction.guild?.name}]`)
 

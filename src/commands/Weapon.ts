@@ -70,7 +70,13 @@ export default class Weapon implements BaseDiscordCommand {
     /**
      * Weapon
      */
-     const weapon = this.costumes.find((weapon) => `${weapon.weapon_id}` === id)
+     let weapon = this.costumes.find((weapon) => `${weapon.weapon_id}` === id)
+
+     if (!weapon) {
+      const [firstResult] = this.index.search(id)
+      weapon = firstResult.item as ApiWeapon
+     }
+
      const weaponCostumeData = await api.get(`/weapon/costume/${weapon.weapon_id}`).catch(() => undefined)
      const weaponCostume: ApiCostume = weaponCostumeData?.data
 
