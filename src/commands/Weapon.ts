@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { ActionRowBuilder, AutocompleteInteraction, ChatInputCommandInteraction, ComponentType, EmbedBuilder, StringSelectMenuBuilder } from 'discord.js'
 import getWeaponEmbed from '../utils/getWeaponEmbed'
-import { ApiCostume, ApiWeapon, BaseDiscordCommand, BotIndexes } from '../..'
+import { ApiCostume, ApiWeapon, BaseDiscordCommand, BotIndexes, debris } from '../..'
 import { emojis, RARITY, WEAPON_TYPE_WORDS } from '../config'
 import api from '../libs/api'
 import getCostumeEmbed from '../utils/getCostumeEmbed'
@@ -132,7 +132,9 @@ export default class Weapon implements BaseDiscordCommand {
      */
 
     if (weaponCostume?.costume_id) {
-      const costumeEmbed = getCostumeEmbed(weaponCostume, weapon)
+      const costumeDebrisData = await api.get(`/costume/debris/${weaponCostume.costume_id}`)
+      const costumeDebris = costumeDebrisData?.data as debris
+      const costumeEmbed = getCostumeEmbed(weaponCostume, weapon, costumeDebris)
       embeds.set('weapon_costume', costumeEmbed)
       options.push({
         label: this.optionsLabels.weapon_costume,

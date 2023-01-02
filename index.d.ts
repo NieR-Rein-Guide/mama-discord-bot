@@ -394,3 +394,12 @@ export enum Attribute {
   All = "all",
 }
 
+export type debris = {
+  debris_id: number
+  rarity: number
+  release_time: Date
+  name: string | null
+  description_short: string | null
+  description_long: string | null
+  image_path_base: string | null
+}

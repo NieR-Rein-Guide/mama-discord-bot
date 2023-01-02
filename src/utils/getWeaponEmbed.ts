@@ -8,14 +8,15 @@ export default function getWeaponEmbed(weapon: ApiWeapon, costume?: ApiCostume) 
 
   let description = ``
 
-  description += `Stats: ${emojis.hp} ${weapon.weapon_stat[0].hp} • ${emojis.atk} ${weapon.weapon_stat[0].atk} • ${emojis.def} ${weapon.weapon_stat[0].vit}`
+  description += `${emojis.hp} ${weapon.weapon_stat[0].hp} • ${emojis.atk} ${weapon.weapon_stat[0].atk} • ${emojis.def} ${weapon.weapon_stat[0].vit}`
 
-  description += `\n${weapon.weapon_skill_link.map(skill => `__${skill.weapon_skill.name}__ (${skill.weapon_skill.cooldown_time / 30} sec)`).join('\n')}`
+  description += `\n${weapon.weapon_skill_link.map(skill => `${emojis.skill} __${skill.weapon_skill.name}__ (${skill.weapon_skill.cooldown_time / 30} sec)`).join('\n')}`
 
-  description += `\nAbilities: ${weapon.weapon_ability_link.map(ability => `[**${ability.weapon_ability.name}**](https://nierrein.guide/ability/weapon/${urlSlug(ability.weapon_ability.name)}-${ability.weapon_ability.ability_id})`).join(' • ')}`
+  description += `\n${emojis.ability} Abilities: ${weapon.weapon_ability_link.map(ability => `[**${ability.weapon_ability.name}**](https://nierrein.guide/ability/weapon/${urlSlug(ability.weapon_ability.name)}-${ability.weapon_ability.ability_id})`).join(' • ')}`
 
   if (costume) {
-    description += `\nCostume: [${costume.character.name} - ${costume.title}](https://nierrein.guide/characters/${costume.character.name}/${costume.slug})`
+    const emojiCharacterSlug = urlSlug(costume.character.name)
+    description += `\n${emojis[emojiCharacterSlug]} Costume: [${costume.character.name} - ${costume.title}](https://nierrein.guide/characters/${urlSlug(costume.character.name)}/${costume.slug})`
   }
 
 

@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { ActionRowBuilder, AutocompleteInteraction, ChatInputCommandInteraction, ComponentType, Embed, EmbedBuilder, StringSelectMenuBuilder } from 'discord.js'
 import getCostumeEmbed from '../utils/getCostumeEmbed'
-import { ApiCostume, ApiTierlistItem, ApiWeapon, BaseDiscordCommand, BotIndexes } from '../..'
+import { ApiCostume, ApiTierlistItem, ApiWeapon, BaseDiscordCommand, BotIndexes, debris } from '../..'
 import { emojis, FEATURED_TIERLISTS, RARITY } from '../config'
 import api from '../libs/api'
 import getWeaponEmbed from '../utils/getWeaponEmbed'
@@ -82,9 +82,10 @@ export default class Costume implements BaseDiscordCommand {
     console.log(`${interaction.user.username}#${interaction.user.discriminator} used "/costume <${id}> <${selectedView}>" to reference ${costume?.character?.name} - ${costume?.title} [in Guild:${interaction.guild?.name}]`)
 
     const costumeWeaponData = await api.get(`/costume/weapon/${costume.costume_id}`)
-
     const costumeWeapon: ApiWeapon = costumeWeaponData?.data
-    const costumeEmbed = getCostumeEmbed(costume, costumeWeapon)
+    const costumeDebrisData = await api.get(`/costume/debris/${costume.costume_id}`)
+    const costumeDebris = costumeDebrisData?.data as debris
+    const costumeEmbed = getCostumeEmbed(costume, costumeWeapon, costumeDebris)
     embeds.set('costume_info', costumeEmbed)
 
     /**
@@ -92,13 +93,17 @@ export default class Costume implements BaseDiscordCommand {
      */
 
     let costumeSkillsDescription = ''
-    costumeSkillsDescription += `\`Skill\`:\n${emojis.skill} __${costume.costume_skill_link[0].costume_skill.name}__ (Gauge ${costume.costume_skill_link[0].costume_skill.gauge_rise_speed})\n${costume.costume_skill_link[0].costume_skill.description}`
+    costumeSkillsDescription += `\`Skill\`\n${emojis.skill} __${costume.costume_skill_link[0].costume_skill.name}__ (Gauge ${costume.costume_skill_link[0].costume_skill.gauge_rise_speed})\n${costume.costume_skill_link[0].costume_skill.description}`
 
-    costumeSkillsDescription += `\n\n\`Abilities\`:\n${[...costume.costume_ability_link].splice(0, 2).map(ability => `${emojis.ability} [**${ability.costume_ability.name}**](https://nierrein.guide/ability/costume/${urlSlug(ability.costume_ability.name)}-${ability.costume_ability.ability_id})\n${ability.costume_ability.description}`).join('\n')}`
+    costumeSkillsDescription += `\n\n\`Abilities\`\n${[...costume.costume_ability_link].splice(0, 2).map(ability => `${emojis.ability} [**${ability.costume_ability.name}**](https://nierrein.guide/ability/costume/${urlSlug(ability.costume_ability.name)}-${ability.costume_ability.ability_id})\n${ability.costume_ability.description}`).join('\n')}`
 
     if (costume.costume_ability_link[2]) {
       const awakeningAbility = costume.costume_ability_link[2]
-      costumeSkillsDescription += `\n\n\`Awakening Ability\`:\n${emojis.ability} ${`[**${awakeningAbility.costume_ability.name}**](${urlSlug(awakeningAbility.costume_ability.name)}-${awakeningAbility.costume_ability.ability_id})\n${awakeningAbility.costume_ability.description}`}`
+      costumeSkillsDescription += `\n\n${emojis.awakening3} \`Awakening Ability\`\n${emojis.ability} ${`[**${awakeningAbility.costume_ability.name}**](${urlSlug(awakeningAbility.costume_ability.name)}-${awakeningAbility.costume_ability.ability_id})\n${awakeningAbility.costume_ability.description}`}`
+    }
+
+    if (costumeDebris) {
+      costumeSkillsDescription += `\n\n${emojis.awakening5} \`Debris\`\n${emojis.ability} **${costumeDebris.name.replace('Debris: ', '')}**\n ${costumeDebris.description_long}`
     }
 
     const costumeSkillsEmbeds = EmbedBuilder.from(costumeEmbed)

@@ -1,30 +1,37 @@
 import { CDN_URL, emojis, RARITY, WEAPON_TYPE } from "../config"
 import { EmbedBuilder } from "discord.js"
-import { ApiCostume, ApiWeapon } from "../.."
+import { ApiCostume, ApiWeapon, debris } from "../.."
 import urlSlug from 'slugg'
 
-export default function getCostumeEmbed(costume: ApiCostume, weapon?: ApiWeapon) {
+export default function getCostumeEmbed(costume: ApiCostume, weapon?: ApiWeapon, debris?: debris) {
+  const embed = new EmbedBuilder()
+
   const url = `https://nierrein.guide/characters/${urlSlug(costume.character.name)}/${urlSlug(costume.title)}`
+  const emojiCharacterSlug = urlSlug(costume.character.name)
 
   let description = ``
 
-  description += `Stats: ${emojis.hp} ${costume.costume_stat[0].hp} • ${emojis.atk} ${costume.costume_stat[0].atk} • ${emojis.def} ${costume.costume_stat[0].vit} • ${emojis.agility} ${costume.costume_stat[0].agi}`
+  description += `${emojis.hp} ${costume.costume_stat[0].hp} • ${emojis.atk} ${costume.costume_stat[0].atk} • ${emojis.def} ${costume.costume_stat[0].vit} • ${emojis.agility} ${costume.costume_stat[0].agi}`
 
-  description += `\nSkill: __${costume.costume_skill_link[0].costume_skill.name}__ (Gauge ${costume.costume_skill_link[0].costume_skill.gauge_rise_speed})`
+  description += `\n${emojis.skill} Skill: __${costume.costume_skill_link[0].costume_skill.name}__ (Gauge ${costume.costume_skill_link[0].costume_skill.gauge_rise_speed})`
 
-  description += `\nAbilities: ${[...costume.costume_ability_link].splice(0, 2).map(ability => `[**${ability.costume_ability.name}**](https://nierrein.guide/ability/costume/${urlSlug(ability.costume_ability.name)}-${ability.costume_ability.ability_id})`).join(' • ')}`
+  description += `\n${emojis.ability} Abilities: ${[...costume.costume_ability_link].splice(0, 2).map(ability => `[**${ability.costume_ability.name}**](https://nierrein.guide/ability/costume/${urlSlug(ability.costume_ability.name)}-${ability.costume_ability.ability_id})`).join(' • ')}`
+
+  if (weapon) {
+    description += `\n${emojis[costume.weapon_type]}${emojis[weapon.attribute]} Weapon: [${weapon.name}](https://nierrein.guide/weapons/${weapon.slug})`
+  }
 
   if (costume.costume_ability_link[2]) {
     const awakeningAbility = costume.costume_ability_link[2]
-    description += `\nAwakening Ability: ${`[**${awakeningAbility.costume_ability.name}**](${urlSlug(awakeningAbility.costume_ability.name)}-${awakeningAbility.costume_ability.ability_id})`}`
+    description += `\n\n${emojis.awakening3} Awakening Ability: ${`[**${awakeningAbility.costume_ability.name}**](${urlSlug(awakeningAbility.costume_ability.name)}-${awakeningAbility.costume_ability.ability_id})`}\n${awakeningAbility.costume_ability.description}`
   }
 
-  if (weapon) {
-    description += `\nWeapon: [${weapon.name}](https://nierrein.guide/weapons/${weapon.slug})`
+  if (debris) {
+    description += `\n\n${emojis.awakening5} Debris: **${debris.name.replace('Debris: ', '')}**\n${debris.description_long}`
   }
 
-  const embed = new EmbedBuilder()
-    .setTitle(`${emojis[costume.weapon_type]} ${costume.character.name} - ${costume.title} (${new Array(RARITY[costume.rarity]).fill('★').join('')})`)
+  embed
+    .setTitle(`${emojis[emojiCharacterSlug]} ${costume.character.name} - ${costume.title} (${new Array(RARITY[costume.rarity]).fill('★').join('')})`)
     .setURL(url)
     .setThumbnail(`${CDN_URL}${costume.image_path_base}battle.png`)
     .setFooter({
