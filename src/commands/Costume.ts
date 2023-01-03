@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { ActionRowBuilder, AutocompleteInteraction, ChatInputCommandInteraction, ComponentType, Embed, EmbedBuilder, StringSelectMenuBuilder } from 'discord.js'
+import { ActionRowBuilder, AutocompleteInteraction, ChatInputCommandInteraction, Colors, ComponentType, Embed, EmbedBuilder, StringSelectMenuBuilder } from 'discord.js'
 import getCostumeEmbed from '../utils/getCostumeEmbed'
 import { ApiCostume, ApiTierlistItem, ApiWeapon, BaseDiscordCommand, BotIndexes, debris } from '../..'
 import { emojis, FEATURED_TIERLISTS, RARITY } from '../config'
@@ -76,6 +76,21 @@ export default class Costume implements BaseDiscordCommand {
 
     if (!costume) {
       const [firstResult] = this.index.search(id)
+
+      if (!firstResult) {
+        const embed = new EmbedBuilder()
+          .setDescription(`I am sorry, Mama could not find anything useful for \`${id}\``)
+          .setColor(Colors.Red)
+
+        interaction.reply({
+          embeds: [embed],
+          ephemeral: true,
+        })
+
+        console.log(`${interaction.user.username}#${interaction.user.discriminator} used "/costume <${id}> <${selectedView}>" but no costume found. [in Guild:${interaction.guild?.name}]`)
+        return
+      }
+
       costume = firstResult.item as ApiCostume
     }
 

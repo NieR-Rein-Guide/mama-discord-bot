@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { ActionRowBuilder, AutocompleteInteraction, ChatInputCommandInteraction, ComponentType, EmbedBuilder, StringSelectMenuBuilder } from 'discord.js'
+import { ActionRowBuilder, AutocompleteInteraction, ChatInputCommandInteraction, Colors, ComponentType, EmbedBuilder, StringSelectMenuBuilder } from 'discord.js'
 import getWeaponEmbed from '../utils/getWeaponEmbed'
 import { ApiCostume, ApiWeapon, BaseDiscordCommand, BotIndexes, debris } from '../..'
 import { emojis, RARITY, WEAPON_TYPE_WORDS } from '../config'
@@ -74,6 +74,21 @@ export default class Weapon implements BaseDiscordCommand {
 
      if (!weapon) {
       const [firstResult] = this.index.search(id)
+
+      if (!firstResult) {
+        const embed = new EmbedBuilder()
+          .setDescription(`I am sorry, Mama could not find anything useful for \`${id}\``)
+          .setColor(Colors.Red)
+
+        interaction.reply({
+          embeds: [embed],
+          ephemeral: true,
+        })
+
+        console.log(`${interaction.user.username}#${interaction.user.discriminator} used "/weapon <${id}> <${selectedView}>" but no weapon found. [in Guild:${interaction.guild?.name}]`)
+        return
+      }
+
       weapon = firstResult.item as ApiWeapon
      }
 
