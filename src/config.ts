@@ -36,6 +36,13 @@ export const emojis = {
   mamaPlease: '<:mamaplease:844021547059642428>',
   awakening3: '<:awakening3:1059525236833407037>',
   awakening5: '<:awakening5:1059525278587682826>',
+
+  // Stats
+  positive: '<:positive:1060299535940853861>',
+  negative: '<:negative:1060299546514686043>',
+  equal: '<:equal:1060299557029822496>',
+
+  // Characters
   '2p': '<:2p:1059528741228920912>',
   fox: '<:fox:1059528752687743057>',
   joker: '<:joker:1059528763148353627>',

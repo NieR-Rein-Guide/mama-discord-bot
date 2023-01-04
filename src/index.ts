@@ -10,6 +10,7 @@ import {
   Help,
   Costume,
   Weapon,
+  Compare,
 } from './commands'
 import { getDataset } from './libs/api'
 import { EmbedBuilder } from '@discordjs/builders'
@@ -30,6 +31,7 @@ async function main() {
     .addCommand(new Help())
     .addCommand(new Costume(costumes, costumesSearch))
     .addCommand(new Weapon(weapons, weaponsSearch))
+    .addCommand(new Compare(costumes, weapons, costumesSearch, weaponsSearch))
     .run()
 }
 
