@@ -4,9 +4,9 @@ import { CommandInteraction, EmbedBuilder } from 'discord.js'
 import { BaseDiscordCommand } from '../..'
 
 export const HELP_DESCRIPTION = '**How to use my services?**\n\n' +
-  '- Want to display a costume? type `/costume name` and start typing a name\n' +
-  '- A weapon? Type `/weapon name`\n' +
-  '- Or you can try your luck using `[[costume or weapon name]]` directly in a message! (*This might break in the future*)\n\n' +
+  '- **Want to display a costume?**\n`/costume name` and start typing a name\n' +
+  '- **A weapon?**\n`/weapon name`\n' +
+  '- **Want to compare 2 costumes or weapons?**\n\`/compare <type> <name1> <name2>\`\n\n' +
   '**Invite link**\n' +
   `[Invite bot](${INVITE_LINK})\n\n` +
   `oh! one last thing, if you need further assistance/want to report a bug please contact **${BOT_OWNER_DISCORD_TAG}** or [**join nierrein.guide**](${NRG_DISCORD_SERVER_INVITE_LINK}) Discord server!`
