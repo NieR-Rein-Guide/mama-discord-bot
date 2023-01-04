@@ -195,11 +195,14 @@ export default class Costume implements BaseDiscordCommand {
       return
     }
 
+
     if (selectedType === 'costumes') {
       // @ts-expect-error aa
       const firstCostume: ApiCostume = firstItem as unknown
       // @ts-expect-error aa
       const secondCostume: ApiCostume  = secondItem as unknown
+
+      console.log(`${interaction.user.username}#${interaction.user.discriminator} updated existing embed "/compare <${selectedType}> <${firstCostume.character.name} - ${firstCostume.title}> <${secondCostume.character.name} - ${secondCostume.title}>" [in Guild:${interaction.guild?.name}]`)
 
       const firstCharacterSlug = urlSlug(firstCostume.character.name)
       const secondCharacterSlug = urlSlug(secondCostume.character.name)
@@ -316,11 +319,13 @@ export default class Costume implements BaseDiscordCommand {
     // @ts-expect-error aa
     const secondWeapon: ApiWeapon  = secondItem as unknown
 
+    console.log(`${interaction.user.username}#${interaction.user.discriminator} updated existing embed "/compare <${selectedType}> <${firstWeapon.name}> <${secondWeapon.name}>" [in Guild:${interaction.guild?.name}]`)
+
     const description = this.getItemDescriptionWeapon(firstWeapon, secondWeapon)
 
     const [firstWeaponCostumeData, secondWeaponCostumeData] = await Promise.all([
-      api.get(`/weapon/costume/${firstWeapon.weapon_id}`),
-      api.get(`/weapon/costume/${secondWeapon.weapon_id}`),
+      api.get(`/weapon/costume/${firstWeapon.weapon_id}`).catch(() => ({ data: null })),
+      api.get(`/weapon/costume/${secondWeapon.weapon_id}`).catch(() => ({ data: null })),
     ])
     const firstWeaponCostume: ApiCostume = firstWeaponCostumeData?.data
     const secondWeaponCostume: ApiCostume = secondWeaponCostumeData?.data
@@ -346,21 +351,21 @@ export default class Costume implements BaseDiscordCommand {
             `${emojis.ability} [**${ability.weapon_ability.name}**](https://nierrein.guide/ability/weapon/${urlSlug(ability.weapon_ability.name)}-${ability.weapon_ability.ability_id})\n${ability.weapon_ability.description}`).join('\n')}`,
             inline: true,
         },
-        {
+        firstWeaponCostume || secondWeaponCostume ? {
           name: `Costumes`,
           value: '-',
-        },
-        {
+        } : null,
+        firstWeaponCostume || secondWeaponCostume ? {
           name: `${emojis[firstWeapon.weapon_type]}${emojis[firstWeapon.attribute]} Costume`,
-          value: `${emojis[urlSlug(firstWeaponCostume.character.name)]} [${firstWeaponCostume.character.name} - ${firstWeaponCostume.title}](https://nierrein.guide/characters/${urlSlug(firstWeaponCostume.character.name)}/${firstWeaponCostume.slug})`,
+          value: firstWeaponCostume ? `${emojis[urlSlug(firstWeaponCostume.character.name)]} [${firstWeaponCostume.character.name} - ${firstWeaponCostume.title}](https://nierrein.guide/characters/${urlSlug(firstWeaponCostume.character.name)}/${firstWeaponCostume.slug})` : 'No costume.',
           inline: true,
-        },
-        {
+        } : null,
+        firstWeaponCostume || secondWeaponCostume ? {
           name: `Costume ${emojis[firstWeapon.attribute]}${emojis[firstWeapon.weapon_type]}`,
-          value: `${emojis[urlSlug(secondWeaponCostume.character.name)]} [${secondWeaponCostume.character.name} - ${secondWeaponCostume.title}](https://nierrein.guide/characters/${urlSlug(secondWeaponCostume.character.name)}/${secondWeaponCostume.slug})`,
+          value: secondWeaponCostume ? `${emojis[urlSlug(secondWeaponCostume.character.name)]} [${secondWeaponCostume.character.name} - ${secondWeaponCostume.title}](https://nierrein.guide/characters/${urlSlug(secondWeaponCostume.character.name)}/${secondWeaponCostume.slug})` : 'No costume.',
           inline: true,
-        },
-      ])
+        } : null,
+      ].filter(Boolean))
 
     interaction.reply({
       embeds: [embed]
