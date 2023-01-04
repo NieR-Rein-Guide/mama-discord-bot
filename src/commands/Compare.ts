@@ -311,7 +311,7 @@ export default class Costume implements BaseDiscordCommand {
 
     const embed = new EmbedBuilder()
       .setTitle(`
-        ${emojis[firstWeapon.weapon_type]}${emojis[firstWeapon.attribute]} ${firstWeapon.name} - ${secondWeapon.name} ${emojis[firstWeapon.attribute]}${emojis[secondWeapon.weapon_type]}
+        ${emojis[firstWeapon.weapon_type]}${emojis[firstWeapon.attribute]} ${firstWeapon.name} - ${secondWeapon.name} ${emojis[secondWeapon.attribute]}${emojis[secondWeapon.weapon_type]}
       `.trim())
       .setDescription(description)
       .setColor(Colors.Blurple)
