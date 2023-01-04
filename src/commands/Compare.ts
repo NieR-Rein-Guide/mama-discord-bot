@@ -230,19 +230,35 @@ export default class Costume implements BaseDiscordCommand {
         .setDescription(description)
         .setColor(Colors.Blurple)
         .addFields([
+          // First item Skill
+          {
+            name: `${emojis[firstCharacterSlug]} Character Skill`,
+            value: `${emojis.skill} **${firstCostume.costume_skill_link[0].costume_skill.name}**\n${firstCostume.costume_skill_link[0].costume_skill.description}`,
+            inline: true,
+          },
+          // Second item Skill
+          {
+            name: `Character Skill ${emojis[secondCharacterSlug]}`,
+            value: `${emojis.skill} **${secondCostume.costume_skill_link[0].costume_skill.name}**\n${secondCostume.costume_skill_link[0].costume_skill.description}`,
+            inline: true,
+          },
+          {
+            name: `Abilities`,
+            value: '-',
+          },
           // First item ability
           {
             name: `${emojis[firstCharacterSlug]} Abilities`,
             value: `\n${[...firstCostume.costume_ability_link].splice(0, 2).map((ability) =>
               `${emojis.ability} [**${ability.costume_ability.name}**](https://nierrein.guide/ability/costume/${urlSlug(ability.costume_ability.name)}-${ability.costume_ability.ability_id})\n${ability.costume_ability.description}`).join('\n')}`,
-              inline: true,
+            inline: true,
           },
           // Second item ability
           {
             name: `Abilities ${emojis[secondCharacterSlug]}`,
             value: `\n${[...secondCostume.costume_ability_link].splice(0, 2).map((ability) =>
               `${emojis.ability} [**${ability.costume_ability.name}**](https://nierrein.guide/ability/costume/${urlSlug(ability.costume_ability.name)}-${ability.costume_ability.ability_id})\n${ability.costume_ability.description}`).join('\n')}`,
-              inline: true,
+            inline: true,
           },
           {
             name: `Awakening abilities`,
