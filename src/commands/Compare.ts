@@ -102,6 +102,36 @@ export default class Costume implements BaseDiscordCommand {
     return weapon
   }
 
+  getGaugeDifferenceSymbol(first, second) {
+    if (first === second) return emojis.equal
+    if (first > second) return emojis.positive
+    return emojis.negative
+  }
+
+  getDifferenceSymbol(value: number) {
+    if (value === 0) {
+      return '='
+    }
+
+    if (value < 0) {
+      return '<'
+    }
+
+    return '>'
+  }
+
+  getSkillDifferenceSymbol(value: number) {
+    if (value === 0) {
+      return '='
+    }
+
+    if (value < 0) {
+      return '>'
+    }
+
+    return '<'
+  }
+
   getDifferenceEmoji(value: number) {
     if (value === 0) {
       return emojis.equal
@@ -135,19 +165,27 @@ export default class Costume implements BaseDiscordCommand {
       cooldown: firstCostume.costume_skill_link[0].costume_skill.cooldown_time - secondCostume.costume_skill_link[0].costume_skill.cooldown_time
     }
 
+    const secondDifferences = {
+      hp: secondCostume.costume_stat[0].hp -  firstCostume.costume_stat[0].hp,
+      atk: secondCostume.costume_stat[0].atk -  firstCostume.costume_stat[0].atk,
+      vit: secondCostume.costume_stat[0].vit -  firstCostume.costume_stat[0].vit,
+      agi: secondCostume.costume_stat[0].agi -  firstCostume.costume_stat[0].agi,
+      cooldown: secondCostume.costume_skill_link[0].costume_skill.cooldown_time - firstCostume.costume_skill_link[0].costume_skill.cooldown_time
+    }
+
     let description = ``
 
     /** STATS */
     description += `
-      ${emojis.hp} \`${firstCostume.costume_stat[0].hp.toString().padEnd(7)}            ${secondCostume.costume_stat[0].hp}\` ${emojis.hp.toString().padStart(7)} ${this.getDifferenceEmoji(differences.hp)} ${differences.hp}
-      ${emojis.atk} \`${firstCostume.costume_stat[0].atk.toString().padEnd(6)}            ${secondCostume.costume_stat[0].atk.toString().padStart(6)}\` ${emojis.atk} ${this.getDifferenceEmoji(differences.atk)} ${differences.atk}
-      ${emojis.def} \`${firstCostume.costume_stat[0].vit.toString().padEnd(6)}            ${secondCostume.costume_stat[0].vit.toString().padStart(6)}\` ${emojis.def} ${this.getDifferenceEmoji(differences.vit)} ${differences.vit}
-      ${emojis.agility} \`${firstCostume.costume_stat[0].agi.toString().padEnd(6)}            ${secondCostume.costume_stat[0].agi.toString().padStart(6)}\` ${emojis.agility} ${this.getDifferenceEmoji(differences.agi)} ${differences.agi}
+      ${this.getDifferenceEmoji(differences.hp)} \`${differences.hp.toString().padEnd(6)}\` ${emojis.hp} \`${firstCostume.costume_stat[0].hp.toString().padEnd(7)}     ${this.getDifferenceSymbol(differences.hp)}       ${secondCostume.costume_stat[0].hp}\` ${emojis.hp} \`${secondDifferences.hp.toString().padStart(6)}\` ${this.getDifferenceEmoji(secondDifferences.hp)}
+      ${this.getDifferenceEmoji(differences.atk)} \`${differences.atk.toString().padEnd(6)}\` ${emojis.atk} \`${firstCostume.costume_stat[0].atk.toString().padEnd(6)}      ${this.getDifferenceSymbol(differences.atk)}      ${secondCostume.costume_stat[0].atk.toString().padStart(6)}\` ${emojis.atk} \`${secondDifferences.atk.toString().padStart(6)}\` ${this.getDifferenceEmoji(secondDifferences.atk)}
+      ${this.getDifferenceEmoji(differences.vit)} \`${differences.vit.toString().padEnd(6)}\` ${emojis.def} \`${firstCostume.costume_stat[0].vit.toString().padEnd(6)}      ${this.getDifferenceSymbol(differences.vit)}      ${secondCostume.costume_stat[0].vit.toString().padStart(6)}\` ${emojis.def} \`${secondDifferences.vit.toString().padStart(6)}\` ${this.getDifferenceEmoji(secondDifferences.vit)}
+      ${this.getDifferenceEmoji(differences.agi)} \`${differences.agi.toString().padEnd(6)}\` ${emojis.agility} \`${firstCostume.costume_stat[0].agi.toString().padEnd(6)}      ${this.getDifferenceSymbol(differences.agi)}      ${secondCostume.costume_stat[0].agi.toString().padStart(6)}\` ${emojis.agility} \`${secondDifferences.agi.toString().padStart(6)}\` ${this.getDifferenceEmoji(secondDifferences.agi)}
     `.trim()
 
     /** SKILLS */
-    description += `\n${emojis.skill} \`Gauge ${firstCostume.costume_skill_link[0].costume_skill.gauge_rise_speed}          ${secondCostume.costume_skill_link[0].costume_skill.gauge_rise_speed} Gauge\` ${emojis.skill}`
-    description += `\n${emojis.skill} \`Value ${firstCostume.costume_skill_link[0].costume_skill.cooldown_time}    ${secondCostume.costume_skill_link[0].costume_skill.cooldown_time} Value\` ${emojis.skill} ${this.getSkillDifferenceEmoji(differences.cooldown)} ${differences.cooldown}`
+    description += `\n${this.getGaugeDifferenceSymbol(firstCostume.costume_skill_link[0].costume_skill.gauge_rise_speed, secondCostume.costume_skill_link[0].costume_skill.gauge_rise_speed)} \`${''.padEnd(6)}\` ${emojis.skill} \`Gauge ${firstCostume.costume_skill_link[0].costume_skill.gauge_rise_speed}           ${secondCostume.costume_skill_link[0].costume_skill.gauge_rise_speed} Gauge\` ${emojis.skill} \`${''.padEnd(6)}\` ${this.getGaugeDifferenceSymbol(firstCostume.costume_skill_link[0].costume_skill.gauge_rise_speed, secondCostume.costume_skill_link[0].costume_skill.gauge_rise_speed)}`
+    description += `\n${this.getSkillDifferenceEmoji(differences.cooldown)} \`${differences.cooldown.toString().padEnd(6)}\` ${emojis.skill} \`Value ${firstCostume.costume_skill_link[0].costume_skill.cooldown_time}  ${this.getSkillDifferenceSymbol(differences.cooldown)}  ${secondCostume.costume_skill_link[0].costume_skill.cooldown_time} Value\` ${emojis.skill} \`${secondDifferences.cooldown.toString().padStart(6)}\` ${this.getSkillDifferenceEmoji(secondDifferences.cooldown)}`
 
     return description
   }
@@ -161,18 +199,27 @@ export default class Costume implements BaseDiscordCommand {
       cooldown2: firstWeapon.weapon_skill_link[1].weapon_skill.cooldown_time / 30 - secondWeapon.weapon_skill_link[1].weapon_skill.cooldown_time / 30
     }
 
+    const secondDifferences = {
+      hp: secondWeapon.weapon_stat[0].hp -  firstWeapon.weapon_stat[0].hp,
+      atk: secondWeapon.weapon_stat[0].atk -  firstWeapon.weapon_stat[0].atk,
+      vit: secondWeapon.weapon_stat[0].vit -  firstWeapon.weapon_stat[0].vit,
+      cooldown1: secondWeapon.weapon_skill_link[0].weapon_skill.cooldown_time / 30 - firstWeapon.weapon_skill_link[0].weapon_skill.cooldown_time / 30,
+      cooldown2: secondWeapon.weapon_skill_link[1].weapon_skill.cooldown_time / 30 - firstWeapon.weapon_skill_link[1].weapon_skill.cooldown_time / 30
+    }
+
     let description = ``
 
     /** STATS */
     description += `
-      ${emojis.hp} \`${firstWeapon.weapon_stat[0].hp.toString().padEnd(7)}            ${secondWeapon.weapon_stat[0].hp}\` ${emojis.hp.toString().padStart(7)} ${this.getDifferenceEmoji(differences.hp)} ${differences.hp}
-      ${emojis.atk} \`${firstWeapon.weapon_stat[0].atk.toString().padEnd(6)}            ${secondWeapon.weapon_stat[0].atk.toString().padStart(6)}\` ${emojis.atk} ${this.getDifferenceEmoji(differences.atk)} ${differences.atk}
-      ${emojis.def} \`${firstWeapon.weapon_stat[0].vit.toString().padEnd(6)}            ${secondWeapon.weapon_stat[0].vit.toString().padStart(6)}\` ${emojis.def} ${this.getDifferenceEmoji(differences.vit)} ${differences.vit}
+      ${this.getDifferenceEmoji(differences.hp)} \`${differences.hp.toString().padEnd(6)}\` ${emojis.hp} \`${firstWeapon.weapon_stat[0].hp.toString().padEnd(7)}     ${this.getDifferenceSymbol(differences.hp)}       ${secondWeapon.weapon_stat[0].hp}\` ${emojis.hp} \`${secondDifferences.hp.toString().padStart(6)}\` ${this.getDifferenceEmoji(secondDifferences.hp)}
+      ${this.getDifferenceEmoji(differences.atk)} \`${differences.atk.toString().padEnd(6)}\` ${emojis.atk} \`${firstWeapon.weapon_stat[0].atk.toString().padEnd(6)}      ${this.getDifferenceSymbol(differences.atk)}      ${secondWeapon.weapon_stat[0].atk.toString().padStart(6)}\` ${emojis.atk} \`${secondDifferences.atk.toString().padStart(6)}\` ${this.getDifferenceEmoji(secondDifferences.atk)}
+      ${this.getDifferenceEmoji(differences.vit)} \`${differences.vit.toString().padEnd(6)}\` ${emojis.def} \`${firstWeapon.weapon_stat[0].vit.toString().padEnd(6)}      ${this.getDifferenceSymbol(differences.vit)}      ${secondWeapon.weapon_stat[0].vit.toString().padStart(6)}\` ${emojis.def} \`${secondDifferences.vit.toString().padStart(6)}\` ${this.getDifferenceEmoji(secondDifferences.vit)}
     `.trim()
 
     /** SKILLS */
-    description += `\n${emojis.skill} \`CD ${firstWeapon.weapon_skill_link[0].weapon_skill.cooldown_time / 30}sec        ${secondWeapon.weapon_skill_link[0].weapon_skill.cooldown_time / 30}sec CD\` ${emojis.skill}  ${this.getSkillDifferenceEmoji(differences.cooldown1)} ${differences.cooldown1}`
-    description += `\n${emojis.skill} \`CD ${firstWeapon.weapon_skill_link[1].weapon_skill.cooldown_time / 30}sec        ${secondWeapon.weapon_skill_link[1].weapon_skill.cooldown_time / 30}sec CD\` ${emojis.skill}  ${this.getSkillDifferenceEmoji(differences.cooldown2)} ${differences.cooldown2}`
+    description += `\n${this.getSkillDifferenceEmoji(differences.cooldown1)} \`${`${differences.cooldown1}sec`.padEnd(6)}\` ${emojis.skill} \`CD ${firstWeapon.weapon_skill_link[0].weapon_skill.cooldown_time / 30}sec    ${this.getSkillDifferenceSymbol(differences.cooldown1)}    ${secondWeapon.weapon_skill_link[0].weapon_skill.cooldown_time / 30}sec CD\` ${emojis.skill} \`${`${secondDifferences.cooldown1}sec`.padStart(6)}\` ${this.getSkillDifferenceEmoji(secondDifferences.cooldown1)}`
+
+    description += `\n${this.getSkillDifferenceEmoji(differences.cooldown2)} \`${`${differences.cooldown2}sec`.padEnd(6)}\` ${emojis.skill} \`CD ${firstWeapon.weapon_skill_link[1].weapon_skill.cooldown_time / 30}sec    ${this.getSkillDifferenceSymbol(differences.cooldown2)}    ${secondWeapon.weapon_skill_link[1].weapon_skill.cooldown_time / 30}sec CD\` ${emojis.skill} \`${`${secondDifferences.cooldown2}sec`.padStart(6)}\` ${this.getSkillDifferenceEmoji(secondDifferences.cooldown2)}`
 
     return description
   }
@@ -361,7 +408,7 @@ export default class Costume implements BaseDiscordCommand {
           inline: true,
         } : null,
         firstWeaponCostume || secondWeaponCostume ? {
-          name: `Costume ${emojis[firstWeapon.attribute]}${emojis[firstWeapon.weapon_type]}`,
+          name: `Costume ${emojis[secondWeapon.attribute]}${emojis[secondWeapon.weapon_type]}`,
           value: secondWeaponCostume ? `${emojis[urlSlug(secondWeaponCostume.character.name)]} [${secondWeaponCostume.character.name} - ${secondWeaponCostume.title}](https://nierrein.guide/characters/${urlSlug(secondWeaponCostume.character.name)}/${secondWeaponCostume.slug})` : 'No costume.',
           inline: true,
         } : null,
