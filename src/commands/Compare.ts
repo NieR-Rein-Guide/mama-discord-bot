@@ -126,10 +126,10 @@ export default class Costume implements BaseDiscordCommand {
     }
 
     if (value < 0) {
-      return '>'
+      return '<'
     }
 
-    return '<'
+    return '>'
   }
 
   getDifferenceEmoji(value: number) {
