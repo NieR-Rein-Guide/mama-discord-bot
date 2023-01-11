@@ -1,8 +1,8 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { ActionRowBuilder, AutocompleteInteraction, ChatInputCommandInteraction, Colors, ComponentType, Embed, EmbedBuilder, StringSelectMenuBuilder } from 'discord.js'
+import { ActionRowBuilder, AutocompleteInteraction, ChatInputCommandInteraction, Colors, ComponentType, Embed, EmbedBuilder, InteractionResponse, StringSelectMenuBuilder } from 'discord.js'
 import getCostumeEmbed from '../utils/getCostumeEmbed'
 import { ApiCostume, ApiTierlistItem, ApiWeapon, BaseDiscordCommand, BotIndexes, debris } from '../..'
-import { emojis, FEATURED_TIERLISTS, RARITY } from '../config'
+import { CDN_URL, emojis, FEATURED_TIERLISTS, RARITY } from '../config'
 import api from '../libs/api'
 import getWeaponEmbed from '../utils/getWeaponEmbed'
 import urlSlug from 'slugg'
@@ -26,6 +26,7 @@ export default class Costume implements BaseDiscordCommand {
               { name: '⚔️ Costume weapon', value: 'costume_weapon' },
               { name: '📊 Tierlist', value: 'tierlist_info' },
               { name: '📚 View weapon stories', value: 'weapon_stories' },
+              { name: '🖼️ View costume full artwork', value: 'costume_artwork' },
             ))
 
   costumes: ApiCostume[] = []
@@ -36,6 +37,7 @@ export default class Costume implements BaseDiscordCommand {
     costume_weapon: '⚔️ View Weapon',
     tierlist_info: '📊 View Tierlist position',
     costume_story: '📚 View costume story',
+    costume_artwork: '🖼️ View costume full artwork',
   }
 
   constructor(costumes: ApiCostume[], index: BotIndexes['costumesSearch']) {
@@ -206,6 +208,20 @@ export default class Costume implements BaseDiscordCommand {
       embeds.set('tierlist_info', embed)
      }
 
+    /**
+     * Artworks
+     */
+    const costumeArtworkEmbed = EmbedBuilder.from(costumeEmbed)
+    costumeArtworkEmbed.data.description = undefined
+    costumeArtworkEmbed.data.thumbnail = undefined;
+    embeds.set('costume_artwork', costumeArtworkEmbed)
+
+    options.push({
+      label: this.optionsLabels.costume_artwork,
+      description: 'Costume\'s full artwork',
+      value: 'costume_artwork',
+    })
+
     const row = new ActionRowBuilder<StringSelectMenuBuilder>()
       .addComponents(
         new StringSelectMenuBuilder()
@@ -215,6 +231,7 @@ export default class Costume implements BaseDiscordCommand {
       )
 
     const message = await interaction.reply({
+      files: selectedView === 'costume_artwork' ? [`${CDN_URL}${costume.image_path_base}full.png`] : [],
       embeds: [embeds.get(selectedView)],
       components: [row],
     })
@@ -239,6 +256,7 @@ export default class Costume implements BaseDiscordCommand {
 
 
       newInteraction.update({
+        files: value === 'costume_artwork' ? [`${CDN_URL}${costume.image_path_base}full.png`] : [],
         embeds: [embeds.get(value)],
         components: [row]
       })
