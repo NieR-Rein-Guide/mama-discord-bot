@@ -72,6 +72,7 @@ export const emojis = {
   dimos: '<:dimos:1059529080531333280>',
   levania: '<:levania:1059529093986664519>',
   '9s': '<:9s:1059529106691215450>',
+  sarafa: '<:sarafa:1065075418648023050>'
 }
 
 export const RARITY = {
