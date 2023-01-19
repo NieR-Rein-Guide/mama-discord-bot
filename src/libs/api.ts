@@ -23,18 +23,28 @@ export async function getDataset() {
     throw new Error('Costumes or Weapons are empty.')
   }
 
-  const search = new Fuse([...costumes, ...weapons], {
-    keys: ['name', 'title', 'character.name'],
+  const modifiedCostumes = costumes.map((costume) => ({
+    ...costume,
+    fullname: `${costume.is_ex_costume ? 'EX ' : ''}${costume.character.name} ${costume.title}`,
+  }))
+
+  const modifiedWeapons = weapons.map((weapon) => ({
+    ...weapon,
+    fullname: `${weapon.is_ex_weapon ? 'EX ' : ''}${weapon.name}`,
+  }))
+
+  const search = new Fuse([...modifiedCostumes, ...modifiedWeapons], {
+    keys: ['fullname'],
     includeScore: true,
   })
 
-  const costumesSearch = new Fuse(costumes, {
-    keys: ['title', 'character.name'],
+  const costumesSearch = new Fuse(modifiedCostumes, {
+    keys: ['fullname'],
     includeScore: true,
   })
 
-  const weaponsSearch = new Fuse(weapons, {
-    keys: ['name'],
+  const weaponsSearch = new Fuse(modifiedWeapons, {
+    keys: ['fullname'],
     includeScore: true,
   })
 
