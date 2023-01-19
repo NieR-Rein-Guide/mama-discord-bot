@@ -214,7 +214,7 @@ export default class Costume implements BaseDiscordCommand {
         const isPve = FEATURED_TIERLISTS.pve.includes(tierlistId)
         const isPvp = FEATURED_TIERLISTS.pvp.includes(tierlistId)
         if (isPve || isPvp) {
-          description += `\n${isPvp ? 'PvP ': ''}[${tierlistItem.tiers.tierslists.title}](https://nierrein.guide/tierlist/${tierlistItem.tiers.tierslists.slug}): **${tierlistItem.tiers.tier}**`
+          description += `\n• [${isPvp ? 'PvP - ': ''}${tierlistItem.tiers.tierslists.title}](https://nierrein.guide/tierlist/${tierlistItem.tiers.tierslists.slug}?highlight=${costume.costume_id}): **${tierlistItem.tiers.tier}**`
          }
        }
 

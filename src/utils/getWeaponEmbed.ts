@@ -19,12 +19,9 @@ export default function getWeaponEmbed(weapon: ApiWeapon, costume?: ApiCostume) 
     embed.setAuthor({
       name: `${costume.character.name} - ${costume.title}'s weapon`,
       iconURL: `${CDN_URL}${costume.character.image_path}`,
+      url: `https://nierrein.guide/characters/${urlSlug(costume.character.name)}/${costume.slug}`
     })
-
-    const emojiCharacterSlug = urlSlug(costume.character.name)
-    description += `\n${emojis[emojiCharacterSlug]} Costume: [${costume.character.name} - ${costume.title}](https://nierrein.guide/characters/${urlSlug(costume.character.name)}/${costume.slug})`
   }
-
 
   embed
     .setTitle(`${emojis[weapon.weapon_type]} ${emojis[weapon.attribute]} ${weapon.name} (${new Array(RARITY[weapon.rarity]).fill('★').join('')})`)
