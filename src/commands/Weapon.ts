@@ -54,6 +54,19 @@ export default class Weapon implements BaseDiscordCommand {
     interaction.respond(choices).catch(() => {})
   }
 
+  static getWeaponSkillsEmbed(embed: EmbedBuilder, weapon: ApiWeapon) {
+    let weaponSkillsDescription = ''
+
+    weaponSkillsDescription += `\n\n\`Skills\`:\n${[...weapon.weapon_skill_link].splice(0, 2).map(skill => `${emojis.skill} __${skill.weapon_skill.name}__ (*${skill.weapon_skill.cooldown_time / 30}sec*)\n${skill.weapon_skill.description}`).join('\n')}`
+
+    weaponSkillsDescription += `\n\n\`Abilities\`:\n${[...weapon.weapon_ability_link].splice(0, 2).map(ability => `${emojis.ability} [**${ability.weapon_ability.name}**](https://nierrein.guide/ability/weapon/${urlSlug(ability.weapon_ability.name)}-${ability.weapon_ability.ability_id}) \n${ability.weapon_ability.description}`).join('\n')}`
+
+    const weaponSkillsEmbeds = EmbedBuilder.from(embed)
+      .setDescription(weaponSkillsDescription)
+
+    return weaponSkillsEmbeds
+  }
+
   async run (interaction: ChatInputCommandInteraction): Promise<void> {
     const id = interaction.options.getString('name')
     let selectedView = interaction.options.getString('view') || 'weapon_info'
@@ -109,14 +122,7 @@ export default class Weapon implements BaseDiscordCommand {
      /**
      * Weapon skills
      */
-    let weaponSkillsDescription = ''
-
-    weaponSkillsDescription += `\n\n\`Skills\`:\n${[...weapon.weapon_skill_link].splice(0, 2).map(skill => `${emojis.skill} __${skill.weapon_skill.name}__ (*${skill.weapon_skill.cooldown_time / 30}sec*)\n${skill.weapon_skill.description}`).join('\n')}`
-
-    weaponSkillsDescription += `\n\n\`Abilities\`:\n${[...weapon.weapon_ability_link].splice(0, 2).map(ability => `${emojis.ability} [**${ability.weapon_ability.name}**](https://nierrein.guide/ability/weapon/${urlSlug(ability.weapon_ability.name)}-${ability.weapon_ability.ability_id}) \n${ability.weapon_ability.description}`).join('\n')}`
-
-    const weaponSkillsEmbeds = EmbedBuilder.from(weaponEmbed)
-      .setDescription(weaponSkillsDescription)
+    const weaponSkillsEmbeds = Weapon.getWeaponSkillsEmbed(weaponEmbed, weapon)
 
     embeds.set('weapon_skills', weaponSkillsEmbeds)
     options.push({

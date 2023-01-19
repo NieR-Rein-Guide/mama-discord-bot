@@ -6,6 +6,7 @@ import { CDN_URL, emojis, FEATURED_TIERLISTS, RARITY } from '../config'
 import api from '../libs/api'
 import getWeaponEmbed from '../utils/getWeaponEmbed'
 import urlSlug from 'slugg'
+import Weapon from './Weapon'
 
 export default class Costume implements BaseDiscordCommand {
   data = new SlashCommandBuilder()
@@ -24,6 +25,7 @@ export default class Costume implements BaseDiscordCommand {
               { name: '🧑 Costume', value: 'costume_info' },
               { name: '📜Costume skills and abilities', value: 'costume_skills' },
               { name: '⚔️ Costume weapon', value: 'costume_weapon' },
+              { name: '⚔️📜 View Weapon skills and abilities', value: 'weapon_skills' },
               { name: '📊 Tierlist', value: 'tierlist_info' },
               { name: '📚 View weapon stories', value: 'weapon_stories' },
               { name: '🖼️ View costume full artwork', value: 'costume_artwork' },
@@ -35,6 +37,7 @@ export default class Costume implements BaseDiscordCommand {
     costume_info: '🧑 View Costume',
     costume_skills: '📜 View skills and abilities',
     costume_weapon: '⚔️ View Weapon',
+    weapon_skills: '⚔️📜 View Weapon skills and abilities',
     tierlist_info: '📊 View Tierlist position',
     costume_story: '📚 View costume story',
     costume_artwork: '🖼️ View costume full artwork',
@@ -162,6 +165,18 @@ export default class Costume implements BaseDiscordCommand {
         description: 'Costume\'s weapon stats and abilities',
         value: 'costume_weapon',
       })
+
+       /**
+       * Weapon skills
+       */
+      const weaponSkillsEmbeds = Weapon.getWeaponSkillsEmbed(weaponEmbed, costumeWeapon)
+
+      embeds.set('weapon_skills', weaponSkillsEmbeds)
+      options.push({
+        label: this.optionsLabels.weapon_skills,
+        description: 'Weapon\'s skills',
+        value: 'weapon_skills',
+      })
     }
 
     /**
@@ -226,7 +241,7 @@ export default class Costume implements BaseDiscordCommand {
       .addComponents(
         new StringSelectMenuBuilder()
           .setCustomId('costume-pagination')
-          .setPlaceholder('Costume info')
+          .setPlaceholder(this.optionsLabels[selectedView])
           .addOptions(options)
       )
 

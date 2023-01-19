@@ -4,6 +4,7 @@ import { ApiCostume, ApiWeapon } from "../.."
 import urlSlug from 'slugg'
 
 export default function getWeaponEmbed(weapon: ApiWeapon, costume?: ApiCostume) {
+  const embed = new EmbedBuilder()
   const url = `https://nierrein.guide/weapons/${weapon.slug}`
 
   let description = ``
@@ -15,12 +16,17 @@ export default function getWeaponEmbed(weapon: ApiWeapon, costume?: ApiCostume) 
   description += `\n${emojis.ability} Abilities: ${weapon.weapon_ability_link.map(ability => `[**${ability.weapon_ability.name}**](https://nierrein.guide/ability/weapon/${urlSlug(ability.weapon_ability.name)}-${ability.weapon_ability.ability_id})`).join(' • ')}`
 
   if (costume) {
+    embed.setAuthor({
+      name: `${costume.character.name} - ${costume.title}'s weapon`,
+      iconURL: `${CDN_URL}${costume.character.image_path}`,
+    })
+
     const emojiCharacterSlug = urlSlug(costume.character.name)
     description += `\n${emojis[emojiCharacterSlug]} Costume: [${costume.character.name} - ${costume.title}](https://nierrein.guide/characters/${urlSlug(costume.character.name)}/${costume.slug})`
   }
 
 
-  const embed = new EmbedBuilder()
+  embed
     .setTitle(`${emojis[weapon.weapon_type]} ${emojis[weapon.attribute]} ${weapon.name} (${new Array(RARITY[weapon.rarity]).fill('★').join('')})`)
     .setURL(url)
     .setDescription(description.trim())
