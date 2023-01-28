@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { ApiCostume, ApiWeapon } from '../..';
+import { ApiCostume, ApiWeapon, costume_ability, weapon_ability } from '../..';
 import Fuse from 'fuse.js'
 import { env } from '../env'
 
@@ -18,6 +18,9 @@ export async function getDataset() {
   const { data: weapons }: {
     data: ApiWeapon[]
   } = await api.get('/weapons')
+
+  const { data: costumesAbilities }: { data: costume_ability[] } = await api.get('/costume/abilities')
+  const { data: weaponsAbilities }: { data: weapon_ability[] } = await api.get('/weapon/abilities')
 
   if (costumes.length === 0 || weapons.length === 0) {
     throw new Error('Costumes or Weapons are empty.')
@@ -51,6 +54,8 @@ export async function getDataset() {
   return {
     costumes,
     weapons,
+    costumesAbilities,
+    weaponsAbilities,
     search,
     costumesSearch,
     weaponsSearch

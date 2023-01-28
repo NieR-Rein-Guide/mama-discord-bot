@@ -11,6 +11,7 @@ import {
   Costume,
   Weapon,
   Compare,
+  Search,
 } from './commands'
 import { getDataset } from './libs/api'
 import { EmbedBuilder } from '@discordjs/builders'
@@ -24,7 +25,8 @@ async function main() {
 
   const {
     costumes, costumesSearch,
-    weapons, weaponsSearch
+    weapons, weaponsSearch,
+    costumesAbilities, weaponsAbilities,
   } = await getDataset()
 
   bot
@@ -32,6 +34,7 @@ async function main() {
     .addCommand(new Costume(costumes, costumesSearch))
     .addCommand(new Weapon(weapons, weaponsSearch))
     .addCommand(new Compare(costumes, weapons, costumesSearch, weaponsSearch))
+    .addCommand(new Search(costumes, weapons, costumesAbilities, weaponsAbilities))
     .run()
 }
 
