@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { ActionRowBuilder, AutocompleteInteraction, ChatInputCommandInteraction, Colors, ComponentType, Embed, EmbedBuilder, InteractionResponse, StringSelectMenuBuilder } from 'discord.js'
+import { ActionRowBuilder, AutocompleteInteraction, ChatInputCommandInteraction, Colors, ComponentType, EmbedBuilder, StringSelectMenuBuilder } from 'discord.js'
 import getCostumeEmbed from '../utils/getCostumeEmbed'
-import { ApiCostume, ApiTierlistItem, ApiWeapon, BaseDiscordCommand, BotIndexes, debris } from '../..'
+import { ApiCostume, ApiTierlistItem, ApiWeapon, BaseDiscordCommand, BotIndexes, debris, Event } from '../..'
 import { CDN_URL, emojis, FEATURED_TIERLISTS, RARITY } from '../config'
 import api from '../libs/api'
 import getWeaponEmbed from '../utils/getWeaponEmbed'
@@ -27,6 +27,7 @@ export default class Costume implements BaseDiscordCommand {
               { name: '⚔️ Costume weapon', value: 'costume_weapon' },
               { name: '⚔️📜 View Weapon skills and abilities', value: 'weapon_skills' },
               { name: '📊 Tierlist', value: 'tierlist_info' },
+              { name: '📍 Sources', value: 'costume_sources' },
               { name: '📚 View weapon stories', value: 'weapon_stories' },
               { name: '🖼️ View costume full artwork', value: 'costume_artwork' },
             ))
@@ -39,6 +40,7 @@ export default class Costume implements BaseDiscordCommand {
     costume_weapon: '⚔️ View Weapon',
     weapon_skills: '⚔️📜 View Weapon skills and abilities',
     tierlist_info: '📊 View Tierlist position',
+    costume_sources: '📍 View costume sources',
     costume_story: '📚 View costume story',
     costume_artwork: '🖼️ View costume full artwork',
   }
@@ -101,10 +103,14 @@ export default class Costume implements BaseDiscordCommand {
 
     console.log(`${interaction.user.username}#${interaction.user.discriminator} used "/costume <${id}> <${selectedView}>" to reference ${costume?.character?.name} - ${costume?.title} [in Guild:${interaction.guild?.name}]`)
 
-    const costumeWeaponData = await api.get(`/costume/weapon/${costume.costume_id}`)
+    const [costumeWeaponData, costumeDebrisData, costumeSourceData] = await Promise.all([
+      api.get(`/costume/weapon/${costume.costume_id}`),
+      api.get(`/costume/debris/${costume.costume_id}`),
+      api.get(`/costume/source/${costume.costume_id}`),
+    ])
     const costumeWeapon: ApiWeapon = costumeWeaponData?.data
-    const costumeDebrisData = await api.get(`/costume/debris/${costume.costume_id}`)
     const costumeDebris = costumeDebrisData?.data as debris
+    const costumeSources = costumeSourceData?.data as Event[]
     const costumeEmbed = getCostumeEmbed(costume, costumeWeapon, costumeDebris)
     embeds.set('costume_info', costumeEmbed)
 
@@ -152,6 +158,28 @@ export default class Costume implements BaseDiscordCommand {
       description: 'View costume story',
       value: 'costume_story',
     })
+
+    /**
+     * Costume sources
+    */
+   if (costumeSources.length > 0) {
+    const costumeSourcesEmbed = EmbedBuilder.from(costumeEmbed)
+    costumeSourcesEmbed.data.description = undefined;
+    costumeSourcesEmbed.addFields(
+      costumeSources.map((source) => ({
+        name: source.attributes.title,
+        value: `Start: <t:${new Date(source.attributes.start_date).getTime() / 1000}:R>\nEnd: <t:${new Date(source.attributes.end_date).getTime() / 1000}:R>`,
+      }))
+    )
+    costumeSourcesEmbed.setImage(costumeSources[0].attributes.image.data.attributes.url)
+
+    embeds.set('costume_sources', costumeSourcesEmbed)
+     options.push({
+       label: this.optionsLabels.costume_sources,
+       description: 'View costume sources',
+       value: 'costume_sources',
+     })
+    }
 
     /**
      * Weapon

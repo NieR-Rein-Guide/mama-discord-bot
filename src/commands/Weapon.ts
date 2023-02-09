@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { ActionRowBuilder, AutocompleteInteraction, ChatInputCommandInteraction, Colors, ComponentType, EmbedBuilder, StringSelectMenuBuilder } from 'discord.js'
 import getWeaponEmbed from '../utils/getWeaponEmbed'
-import { ApiCostume, ApiWeapon, BaseDiscordCommand, BotIndexes, debris } from '../..'
+import { ApiCostume, ApiWeapon, BaseDiscordCommand, BotIndexes, debris, Event } from '../..'
 import { emojis, RARITY, WEAPON_TYPE_WORDS } from '../config'
 import api from '../libs/api'
 import getCostumeEmbed from '../utils/getCostumeEmbed'
@@ -25,6 +25,7 @@ export default class Weapon implements BaseDiscordCommand {
               { name: '📜 View skills and abilities', value: 'weapon_skills' },
               { name: '📚 View weapon stories', value: 'weapon_stories' },
               { name: '🧑 View Costume', value: 'weapon_costume' },
+              { name: '📍 View weapon sources', value: 'weapon_sources' },
             ))
 
   costumes: ApiWeapon[] = []
@@ -34,6 +35,7 @@ export default class Weapon implements BaseDiscordCommand {
     weapon_skills: '📜 View skills and abilities',
     weapon_stories: '📚 View weapon stories',
     weapon_costume: '🧑 View Costume',
+    weapon_sources: '📍 View weapon sources',
   }
 
   constructor(costumes: ApiWeapon[], index: BotIndexes['weaponsSearch']) {
@@ -163,6 +165,32 @@ export default class Weapon implements BaseDiscordCommand {
         value: 'weapon_costume',
       })
     }
+
+     /**
+       * Weapon sources
+      */
+
+    const weawponSourcesData = await api.get(`/weapon/source/${weapon.weapon_id}`)
+    const weaponSources = weawponSourcesData?.data as Event[]
+
+    if (weaponSources.length > 0) {
+      const weaponSourcesEmbed = EmbedBuilder.from(weaponEmbed)
+      weaponSourcesEmbed.data.description = undefined;
+      weaponSourcesEmbed.addFields(
+        weaponSources.map((source) => ({
+          name: source.attributes.title,
+          value: `Start: <t:${new Date(source.attributes.start_date).getTime() / 1000}:R>\nEnd: <t:${new Date(source.attributes.end_date).getTime() / 1000}:R>`,
+        }))
+      )
+      weaponSourcesEmbed.setImage(weaponSources[0].attributes.image.data.attributes.url)
+
+      embeds.set('weapon_sources', weaponSourcesEmbed)
+      options.push({
+        label: this.optionsLabels.weapon_sources,
+        description: 'View potential weapon sources',
+        value: 'weapon_sources',
+      })
+      }
 
     const row = new ActionRowBuilder<StringSelectMenuBuilder>()
       .addComponents(
