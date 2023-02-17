@@ -175,7 +175,7 @@ export default class Weapon implements BaseDiscordCommand {
 
     if (weaponSources.length > 0) {
       const weaponSourcesEmbed = EmbedBuilder.from(weaponEmbed)
-      weaponSourcesEmbed.data.description = undefined;
+      weaponSourcesEmbed.setDescription(`:warning: Experimental feature (some of them might be incorrect)\n${weaponSources.length} potential sources found.`)
       weaponSourcesEmbed.addFields(
         weaponSources.map((source) => ({
           name: source.attributes.title,
