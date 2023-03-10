@@ -6,6 +6,7 @@ import { emojis, RARITY, WEAPON_TYPE_WORDS } from '../config'
 import api from '../libs/api'
 import getCostumeEmbed from '../utils/getCostumeEmbed'
 import urlSlug from 'slugg'
+import Costume from './Costume'
 
 export default class Weapon implements BaseDiscordCommand {
   data = new SlashCommandBuilder()
@@ -25,6 +26,7 @@ export default class Weapon implements BaseDiscordCommand {
               { name: '📜 View skills and abilities', value: 'weapon_skills' },
               { name: '📚 View weapon stories', value: 'weapon_stories' },
               { name: '🧑 View Costume', value: 'weapon_costume' },
+              { name: '🧑📜 View Costume skills and abilities', value: 'costume_skills' },
               { name: '📍 View weapon sources', value: 'weapon_sources' },
             ))
 
@@ -35,6 +37,7 @@ export default class Weapon implements BaseDiscordCommand {
     weapon_skills: '📜 View skills and abilities',
     weapon_stories: '📚 View weapon stories',
     weapon_costume: '🧑 View Costume',
+    costume_skills: '🧑📜 View costume skills and abilities',
     weapon_sources: '📍 View weapon sources',
   }
 
@@ -62,6 +65,14 @@ export default class Weapon implements BaseDiscordCommand {
     weaponSkillsDescription += `\n\n\`Skills\`:\n${[...weapon.weapon_skill_link].splice(0, 2).map(skill => `${emojis.skill} __${skill.weapon_skill.name}__ (*${skill.weapon_skill.cooldown_time / 30}sec*)\n${skill.weapon_skill.description}`).join('\n')}`
 
     weaponSkillsDescription += `\n\n\`Abilities\`:\n${[...weapon.weapon_ability_link].splice(0, 2).map(ability => `${emojis.ability} [**${ability.weapon_ability.name}**](https://nierrein.guide/ability/weapon/${urlSlug(ability.weapon_ability.name)}-${ability.weapon_ability.ability_id}) \n${ability.weapon_ability.description}`).join('\n')}`
+
+    if (weapon.weapon_ability_link.some((ability) => ability.slot_number === 3)){
+      weaponSkillsDescription += `\n${[...weapon.weapon_ability_link].filter((ability) => ability.slot_number === 3).map(ability => `${emojis.ability} [**${ability.weapon_ability.name}**](https://nierrein.guide/ability/weapon/${urlSlug(ability.weapon_ability.name)}-${ability.weapon_ability.ability_id}) \n${ability.weapon_ability.description}`).join('\n')}`
+    }
+
+    if (weapon.weapon_ability_link.some((ability) => ability.slot_number === 4)) {
+      weaponSkillsDescription += `\n\n\`Refining ability\`:\n${[...weapon.weapon_ability_link].filter((ability) => ability.slot_number === 4).map(ability => `${emojis.ability} [**${ability.weapon_ability.name}**](https://nierrein.guide/ability/weapon/${urlSlug(ability.weapon_ability.name)}-${ability.weapon_ability.ability_id}) \n${ability.weapon_ability.description}`).join('\n')}`
+    }
 
     const weaponSkillsEmbeds = EmbedBuilder.from(embed)
       .setDescription(weaponSkillsDescription)
@@ -163,6 +174,19 @@ export default class Weapon implements BaseDiscordCommand {
         label: this.optionsLabels.weapon_costume,
         description: 'Weapon\'s costume stats and abilities',
         value: 'weapon_costume',
+      })
+
+      /**
+       * Costume skill and abilities
+       */
+
+      const costumeSkillsEmbed = Costume.getCostumeSkillsEmbed(costumeEmbed, weaponCostume, costumeDebris)
+
+      embeds.set('costume_skills', costumeSkillsEmbed)
+      options.push({
+        label: this.optionsLabels.costume_skills,
+        description: 'Costume skill and abilities',
+        value: 'costume_skills',
       })
     }
 

@@ -63,6 +63,25 @@ export default class Costume implements BaseDiscordCommand {
     await interaction.respond(choices).catch(() => {});
   }
 
+  static getCostumeSkillsEmbed(embed: EmbedBuilder, costume: ApiCostume, costumeDebris: debris) {
+    let costumeSkillsDescription = ''
+    costumeSkillsDescription += `\`Skill\`\n${emojis.skill} __${costume.costume_skill_link[0].costume_skill.name}__ (Gauge ${costume.costume_skill_link[0].costume_skill.gauge_rise_speed})\n${costume.costume_skill_link[0].costume_skill.description}`
+
+    costumeSkillsDescription += `\n\n\`Abilities\`\n${[...costume.costume_ability_link].splice(0, 2).map(ability => `${emojis.ability} [**${ability.costume_ability.name}**](https://nierrein.guide/ability/costume/${urlSlug(ability.costume_ability.name)}-${ability.costume_ability.ability_id})\n${ability.costume_ability.description}`).join('\n')}`
+
+    if (costume.costume_ability_link[2]) {
+      const awakeningAbility = costume.costume_ability_link[2]
+      costumeSkillsDescription += `\n\n${emojis.awakening3} \`Awakening Ability\`\n${emojis.ability} ${`[**${awakeningAbility.costume_ability.name}**](${urlSlug(awakeningAbility.costume_ability.name)}-${awakeningAbility.costume_ability.ability_id})\n${awakeningAbility.costume_ability.description}`}`
+    }
+
+    if (costumeDebris) {
+      costumeSkillsDescription += `\n\n${emojis.awakening5} \`Debris\`\n${emojis.ability} **${costumeDebris.name.replace('Debris: ', '')}**\n ${costumeDebris.description_long}`
+    }
+
+    return EmbedBuilder.from(embed)
+      .setDescription(costumeSkillsDescription)
+  }
+
   async run (interaction: ChatInputCommandInteraction): Promise<void> {
     const id = interaction.options.getString('name')
     const selectedView = interaction.options.getString('view') || 'costume_info'
@@ -118,24 +137,9 @@ export default class Costume implements BaseDiscordCommand {
      * Costume skill and abilities
      */
 
-    let costumeSkillsDescription = ''
-    costumeSkillsDescription += `\`Skill\`\n${emojis.skill} __${costume.costume_skill_link[0].costume_skill.name}__ (Gauge ${costume.costume_skill_link[0].costume_skill.gauge_rise_speed})\n${costume.costume_skill_link[0].costume_skill.description}`
+    const costumeSkillsEmbed = Costume.getCostumeSkillsEmbed(costumeEmbed, costume, costumeDebris)
 
-    costumeSkillsDescription += `\n\n\`Abilities\`\n${[...costume.costume_ability_link].splice(0, 2).map(ability => `${emojis.ability} [**${ability.costume_ability.name}**](https://nierrein.guide/ability/costume/${urlSlug(ability.costume_ability.name)}-${ability.costume_ability.ability_id})\n${ability.costume_ability.description}`).join('\n')}`
-
-    if (costume.costume_ability_link[2]) {
-      const awakeningAbility = costume.costume_ability_link[2]
-      costumeSkillsDescription += `\n\n${emojis.awakening3} \`Awakening Ability\`\n${emojis.ability} ${`[**${awakeningAbility.costume_ability.name}**](${urlSlug(awakeningAbility.costume_ability.name)}-${awakeningAbility.costume_ability.ability_id})\n${awakeningAbility.costume_ability.description}`}`
-    }
-
-    if (costumeDebris) {
-      costumeSkillsDescription += `\n\n${emojis.awakening5} \`Debris\`\n${emojis.ability} **${costumeDebris.name.replace('Debris: ', '')}**\n ${costumeDebris.description_long}`
-    }
-
-    const costumeSkillsEmbeds = EmbedBuilder.from(costumeEmbed)
-      .setDescription(costumeSkillsDescription)
-
-    embeds.set('costume_skills', costumeSkillsEmbeds)
+    embeds.set('costume_skills', costumeSkillsEmbed)
     options.push({
       label: this.optionsLabels.costume_skills,
       description: 'Costume skill and abilities',
