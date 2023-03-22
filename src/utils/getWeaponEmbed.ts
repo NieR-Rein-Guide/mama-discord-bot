@@ -7,9 +7,21 @@ export default function getWeaponEmbed(weapon: ApiWeapon, costume?: ApiCostume) 
   const embed = new EmbedBuilder()
   const url = `https://nierrein.guide/weapons/${weapon.slug}`
 
+  let stats = weapon.weapon_stat
+    .filter((row) => !row.is_refined)
+    .pop();
+
+  const hasRefined = weapon.weapon_stat.find(
+    (row) => row.is_refined
+  );
+
+  if (hasRefined) {
+    stats = hasRefined;
+  }
+
   let description = ``
 
-  description += `${emojis.hp} ${weapon.weapon_stat[0].hp} • ${emojis.atk} ${weapon.weapon_stat[0].atk} • ${emojis.def} ${weapon.weapon_stat[0].vit}`
+  description += `${emojis.hp} ${stats.hp} • ${emojis.atk} ${stats.atk} • ${emojis.def} ${stats.vit}`
 
   description += `\n${weapon.weapon_skill_link.map(skill => `${emojis.skill} __${skill.weapon_skill.name}__ (${skill.weapon_skill.cooldown_time / 30} sec)`).join('\n')}`
 
@@ -29,7 +41,7 @@ export default function getWeaponEmbed(weapon: ApiWeapon, costume?: ApiCostume) 
     .setDescription(description.trim())
     .setThumbnail(`${CDN_URL}${weapon.image_path}standard.png`)
     .setFooter({
-      text: `Level: ${weapon.weapon_stat[0].level} • Weapon released`,
+      text: `Level: ${stats.level} • Weapon released`,
       iconURL: weapon.is_ex_weapon ? 'https://nierrein.guide/icons/weapons/dark.png' : WEAPON_TYPE[weapon.weapon_type]
     })
     .setTimestamp(new Date(weapon.release_time))

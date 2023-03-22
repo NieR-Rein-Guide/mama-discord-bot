@@ -179,6 +179,7 @@ export type costume_stat = {
   eva_rate: number
   hp: number
   vit: number
+  awakening_step: number
 }
 
 /**
@@ -295,6 +296,7 @@ export type weapon_stat = {
   atk: number
   hp: number
   vit: number
+  is_refined: boolean
 }
 
 /**

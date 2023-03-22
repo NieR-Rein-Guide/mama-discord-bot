@@ -2,16 +2,24 @@ import { CDN_URL, emojis, RARITY, WEAPON_TYPE } from "../config"
 import { EmbedBuilder } from "discord.js"
 import { ApiCostume, ApiWeapon, debris } from "../.."
 import urlSlug from 'slugg'
+import getCostumeLevelsByRarity from "./getCostumeLevelsByRarity"
 
 export default function getCostumeEmbed(costume: ApiCostume, weapon?: ApiWeapon, debris?: debris) {
   const embed = new EmbedBuilder()
+
+  const { maxWithAsc } = getCostumeLevelsByRarity(costume.rarity);
+  const selectedLevel = maxWithAsc + 10;
+  const stats = costume.costume_stat
+    .filter((stat) => stat.level === selectedLevel)
+    .sort((a, b) => a.awakening_step - b.awakening_step)
+    .pop()
 
   const url = `https://nierrein.guide/characters/${urlSlug(costume.character.name)}/${urlSlug(costume.title)}`
   const emojiCharacterSlug = urlSlug(costume.character.name)
 
   let description = ``
 
-  description += `${emojis.hp} ${costume.costume_stat[0].hp} • ${emojis.atk} ${costume.costume_stat[0].atk} • ${emojis.def} ${costume.costume_stat[0].vit} • ${emojis.agility} ${costume.costume_stat[0].agi}`
+  description += `${emojis.hp} ${stats.hp} • ${emojis.atk} ${stats.atk} • ${emojis.def} ${stats.vit} • ${emojis.agility} ${stats.agi}`
 
   description += `\n${emojis.skill} Skill: __${costume.costume_skill_link[0].costume_skill.name}__ (Gauge ${costume.costume_skill_link[0].costume_skill.gauge_rise_speed})`
 
@@ -35,7 +43,7 @@ export default function getCostumeEmbed(costume: ApiCostume, weapon?: ApiWeapon,
     .setURL(url)
     .setThumbnail(`${CDN_URL}${costume.image_path_base}battle.png`)
     .setFooter({
-       text: `Level: ${costume.costume_stat[0].level} • Costume released`,
+       text: `Level: ${stats.level} • Costume released`,
        iconURL: costume.is_ex_costume ? 'https://nierrein.guide/icons/weapons/dark.png' : WEAPON_TYPE[costume.weapon_type]
     })
     .setTimestamp(new Date(costume.release_time))

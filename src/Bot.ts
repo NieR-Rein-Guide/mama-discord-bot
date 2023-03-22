@@ -1,12 +1,9 @@
 import { Client, Collection, Guild, Interaction, Message, EmbedBuilder } from 'discord.js'
 import { REST } from '@discordjs/rest'
 import { Routes } from 'discord-api-types/v9'
-import { PrismaClient } from '@prisma/client'
 import { emojis, formatRegex } from './config'
 import { getDataset } from './libs/api'
-import { ApiCostume, ApiWeapon, BaseDiscordCommand, BotIndexes } from '..'
-import getCostumeEmbed from './utils/getCostumeEmbed'
-import getWeaponEmbed from './utils/getWeaponEmbed'
+import { BaseDiscordCommand, BotIndexes } from '..'
 import { env } from './env'
 import { HELP_DESCRIPTION } from './commands/Help'
 
