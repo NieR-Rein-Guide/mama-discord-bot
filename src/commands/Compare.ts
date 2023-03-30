@@ -157,13 +157,16 @@ export default class Costume implements BaseDiscordCommand {
     return ':snail:'
   }
 
-  getItemDescriptionCostume(firstCostume: ApiCostume, secondCostume: ApiCostume) {
+  getItemDescriptionCostume(firstCostume: ApiCostume, secondCostume: ApiCostume, {
+    awakeningStep = 0,
+  }) {
 
     const { maxWithAsc: firstMax } = getCostumeLevelsByRarity(firstCostume.rarity);
     const firstLevel = firstMax + 10;
     const firstStats = firstCostume.costume_stat
       .filter((stat) => stat.level === firstLevel)
       .sort((a, b) => a.awakening_step - b.awakening_step)
+      .filter((row) => row.awakening_step === awakeningStep)
       .pop()
 
     const { maxWithAsc: secondMax } = getCostumeLevelsByRarity(secondCostume.rarity);
@@ -171,6 +174,7 @@ export default class Costume implements BaseDiscordCommand {
     const secondStats = secondCostume.costume_stat
       .filter((stat) => stat.level === secondLevel)
       .sort((a, b) => a.awakening_step - b.awakening_step)
+      .filter((row) => row.awakening_step === awakeningStep)
       .pop()
 
     const differences = {

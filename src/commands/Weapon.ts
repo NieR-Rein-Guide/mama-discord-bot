@@ -17,6 +17,12 @@ export default class Weapon implements BaseDiscordCommand {
         .setDescription('Weapon name to search for')
         .setRequired(true)
         .setAutocomplete(true))
+        .addNumberOption(option =>
+          option.setName('awakeningStep')
+            .setMinValue(0)
+            .setMaxValue(5)
+            .setDescription('Select which awakening level (default: no awakening)')
+            .setRequired(false))
         .addStringOption(option =>
           option.setName('view')
             .setDescription('Select which information to view first')
@@ -83,6 +89,7 @@ export default class Weapon implements BaseDiscordCommand {
   async run (interaction: ChatInputCommandInteraction): Promise<void> {
     const id = interaction.options.getString('name')
     let selectedView = interaction.options.getString('view') || 'weapon_info'
+    const awakeningStep = interaction.options.getNumber('awakeningStep') || 0
 
     const options = [
       {
@@ -168,7 +175,7 @@ export default class Weapon implements BaseDiscordCommand {
     if (weaponCostume?.costume_id) {
       const costumeDebrisData = await api.get(`/costume/debris/${weaponCostume.costume_id}`)
       const costumeDebris = costumeDebrisData?.data as debris
-      const costumeEmbed = getCostumeEmbed(weaponCostume, weapon, costumeDebris)
+      const costumeEmbed = getCostumeEmbed(weaponCostume, weapon, costumeDebris, awakeningStep)
       embeds.set('weapon_costume', costumeEmbed)
       options.push({
         label: this.optionsLabels.weapon_costume,

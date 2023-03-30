@@ -34,7 +34,12 @@ export const emojis = {
   skill: '<:skill:1054876198213255178>',
   mamaDirect: '<:mamadirect:822205475009200128>',
   mamaPlease: '<:mamaplease:844021547059642428>',
+
+  // Awakening
+  awakening1: '<:awakening1:1091093271905845328>',
+  awakening2: '<:awakening2:1091093283708608522>',
   awakening3: '<:awakening3:1059525236833407037>',
+  awakening4: '<:awakening4:1091093294487965756>',
   awakening5: '<:awakening5:1059525278587682826>',
 
   // Stats
