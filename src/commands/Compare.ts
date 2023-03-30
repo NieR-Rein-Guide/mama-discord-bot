@@ -307,7 +307,9 @@ export default class Costume implements BaseDiscordCommand {
       const firstItemDebris: debris = firstCostumeDebrisData?.data
       const secondItemDebris: debris = secondCostumeDebrisData?.data
 
-      const description = this.getItemDescriptionCostume(firstCostume, secondCostume)
+      const description = this.getItemDescriptionCostume(firstCostume, secondCostume, {
+        awakeningStep: 0,
+      })
 
       const firstAwakeningAbility = firstCostume.costume_ability_link[2]
       const secondAwakeningAbility = secondCostume.costume_ability_link[2]
