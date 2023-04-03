@@ -4,16 +4,17 @@ import { ApiCostume, ApiWeapon, debris } from "../.."
 import urlSlug from 'slugg'
 import getCostumeLevelsByRarity from "./getCostumeLevelsByRarity"
 
-export default function getCostumeEmbed(costume: ApiCostume, weapon?: ApiWeapon, debris?: debris, awakeningStep = 0) {
+export default function getCostumeEmbed(costume: ApiCostume, weapon?: ApiWeapon, debris?: debris, awakeningStep?: number, isExalted?: boolean) {
   const embed = new EmbedBuilder()
 
   const { maxWithAsc } = getCostumeLevelsByRarity(costume.rarity);
-  const selectedLevel = maxWithAsc + 10;
+  const selectedLevel = isExalted ? maxWithAsc + 10 : maxWithAsc;
   const stats = costume.costume_stat
     .filter((stat) => stat.level === selectedLevel)
     .sort((a, b) => a.awakening_step - b.awakening_step)
     .filter((row) => row.awakening_step === awakeningStep)
     .pop()
+
 
   const url = `https://nierrein.guide/characters/${urlSlug(costume.character.name)}/${urlSlug(costume.title)}`
   const emojiCharacterSlug = urlSlug(costume.character.name)
@@ -40,7 +41,7 @@ export default function getCostumeEmbed(costume: ApiCostume, weapon?: ApiWeapon,
   }
 
   embed
-    .setTitle(`${awakeningStep > 0 ? emojis[`awakening${awakeningStep}`] : ''}${emojis[emojiCharacterSlug]} ${costume.character.name} - ${costume.title} (${new Array(RARITY[costume.rarity]).fill('★').join('')})`)
+    .setTitle(`${isExalted ? emojis.refined : ''}${awakeningStep > 0 ? emojis[`awakening${awakeningStep}`] : ''}${emojis[emojiCharacterSlug]} ${costume.character.name} - ${costume.title} (${new Array(RARITY[costume.rarity]).fill('★').join('')})`)
     .setURL(url)
     .setThumbnail(`${CDN_URL}${costume.image_path_base}battle.png`)
     .setFooter({

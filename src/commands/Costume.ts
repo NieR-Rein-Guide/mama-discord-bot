@@ -17,12 +17,6 @@ export default class Costume implements BaseDiscordCommand {
         .setDescription('Costume name to search for')
         .setRequired(true)
         .setAutocomplete(true))
-        .addNumberOption(option =>
-          option.setName('awakeningStep')
-            .setMinValue(0)
-            .setMaxValue(5)
-            .setDescription('Select which awakening level (default: no awakening)')
-            .setRequired(false))
         .addStringOption(option =>
           option.setName('view')
             .setDescription('Select which information to view first')
@@ -37,6 +31,15 @@ export default class Costume implements BaseDiscordCommand {
               { name: '📚 View weapon stories', value: 'weapon_stories' },
               { name: '🖼️ View costume full artwork', value: 'costume_artwork' },
             ))
+      .addNumberOption(option =>
+        option.setName('awakening_step')
+          .setMinValue(0)
+          .setMaxValue(5)
+          .setDescription('Select which awakening level (default: no awakening)')
+          .setRequired(false))
+      .addBooleanOption(option =>
+        option.setName('is_exalted')
+          .setDescription('Whether or not to show exalted stats (default: no exalt)'))
 
   costumes: ApiCostume[] = []
   index: BotIndexes['costumesSearch']
@@ -91,7 +94,8 @@ export default class Costume implements BaseDiscordCommand {
   async run (interaction: ChatInputCommandInteraction): Promise<void> {
     const id = interaction.options.getString('name')
     const selectedView = interaction.options.getString('view') || 'costume_info'
-    const awakeningStep = interaction.options.getNumber('awakeningStep') || 0
+    const awakeningStep = interaction.options.getNumber('awakening_step') || 0
+    const isExalted = interaction.options.getBoolean('is_exalted')
 
     const options = [
       {
@@ -100,6 +104,8 @@ export default class Costume implements BaseDiscordCommand {
         value: 'costume_info',
       },
     ]
+
+    let customMessage = '';
     const embeds = new Map()
 
     /**
@@ -109,6 +115,8 @@ export default class Costume implements BaseDiscordCommand {
 
     if (!costume) {
       const [firstResult] = this.index.search(id)
+
+      customMessage = `Closest match for custom keyword: \`${id}\``;
 
       if (!firstResult) {
         const embed = new EmbedBuilder()
@@ -137,7 +145,7 @@ export default class Costume implements BaseDiscordCommand {
     const costumeWeapon: ApiWeapon = costumeWeaponData?.data
     const costumeDebris = costumeDebrisData?.data as debris
     const costumeSources = costumeSourceData?.data as Event[]
-    const costumeEmbed = getCostumeEmbed(costume, costumeWeapon, costumeDebris, awakeningStep)
+    const costumeEmbed = getCostumeEmbed(costume, costumeWeapon, costumeDebris, awakeningStep, isExalted)
     embeds.set('costume_info', costumeEmbed)
 
     /**
@@ -288,6 +296,7 @@ export default class Costume implements BaseDiscordCommand {
       files: selectedView === 'costume_artwork' ? [`${CDN_URL}${costume.image_path_base}full.png`] : [],
       embeds: [embeds.get(selectedView)],
       components: [row],
+      content: customMessage ? customMessage : undefined,
     })
 
     const collector = message.createMessageComponentCollector({
@@ -312,7 +321,8 @@ export default class Costume implements BaseDiscordCommand {
       newInteraction.update({
         files: value === 'costume_artwork' ? [`${CDN_URL}${costume.image_path_base}full.png`] : [],
         embeds: [embeds.get(value)],
-        components: [row]
+        components: [row],
+        content: customMessage ? customMessage : undefined,
       })
     })
 

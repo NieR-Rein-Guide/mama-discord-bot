@@ -16,25 +16,32 @@ export default class Weapon implements BaseDiscordCommand {
       option.setName('name')
         .setDescription('Weapon name to search for')
         .setRequired(true)
-        .setAutocomplete(true))
-        .addNumberOption(option =>
-          option.setName('awakeningStep')
-            .setMinValue(0)
-            .setMaxValue(5)
-            .setDescription('Select which awakening level (default: no awakening)')
-            .setRequired(false))
-        .addStringOption(option =>
-          option.setName('view')
-            .setDescription('Select which information to view first')
-            .setRequired(false)
-            .addChoices(
-              { name: '⚔️ View Weapon', value: 'weapon_info' },
-              { name: '📜 View skills and abilities', value: 'weapon_skills' },
-              { name: '📚 View weapon stories', value: 'weapon_stories' },
-              { name: '🧑 View Costume', value: 'weapon_costume' },
-              { name: '🧑📜 View Costume skills and abilities', value: 'costume_skills' },
-              { name: '📍 View weapon sources', value: 'weapon_sources' },
-            ))
+      .setAutocomplete(true))
+      .addStringOption(option =>
+        option.setName('view')
+          .setDescription('Select which information to view first')
+          .setRequired(false)
+          .addChoices(
+            { name: '⚔️ View Weapon', value: 'weapon_info' },
+            { name: '📜 View skills and abilities', value: 'weapon_skills' },
+            { name: '📚 View weapon stories', value: 'weapon_stories' },
+            { name: '🧑 View Costume', value: 'weapon_costume' },
+            { name: '🧑📜 View Costume skills and abilities', value: 'costume_skills' },
+            { name: '📍 View weapon sources', value: 'weapon_sources' },
+      ))
+    .addBooleanOption(option =>
+      option.setName('is_refined')
+        .setDescription('Whether or not to show refined stats (default: no refine)'))
+    .addNumberOption(option =>
+      option.setName('costume_awakening_step')
+        .setMinValue(0)
+        .setMaxValue(5)
+        .setDescription('Select which costume awakening level (default: no awakening)')
+        .setRequired(false))
+    .addBooleanOption(option =>
+      option.setName('costume_is_exalted')
+        .setDescription('Whether or not to show costume exalted stats (default: no exalt)'))
+
 
   costumes: ApiWeapon[] = []
   index: BotIndexes['weaponsSearch']
@@ -89,7 +96,9 @@ export default class Weapon implements BaseDiscordCommand {
   async run (interaction: ChatInputCommandInteraction): Promise<void> {
     const id = interaction.options.getString('name')
     let selectedView = interaction.options.getString('view') || 'weapon_info'
-    const awakeningStep = interaction.options.getNumber('awakeningStep') || 0
+    const isRefined = interaction.options.getBoolean('is_refined')
+    const awakeningStep = interaction.options.getNumber('costume_awakening_step') || 0
+    const isExalted = interaction.options.getBoolean('costume_is_exalted')
 
     const options = [
       {
@@ -98,6 +107,8 @@ export default class Weapon implements BaseDiscordCommand {
         value: 'weapon_info',
       },
     ]
+
+    let customMessage = '';
     const embeds = new Map()
 
     /**
@@ -107,6 +118,8 @@ export default class Weapon implements BaseDiscordCommand {
 
      if (!weapon) {
       const [firstResult] = this.index.search(id)
+
+      customMessage = `Closest match for custom keyword: \`${id}\``;
 
       if (!firstResult) {
         const embed = new EmbedBuilder()
@@ -135,7 +148,7 @@ export default class Weapon implements BaseDiscordCommand {
       selectedView = 'weapon_info'
      }
 
-     const weaponEmbed = getWeaponEmbed(weapon, weaponCostume)
+     const weaponEmbed = getWeaponEmbed(weapon, weaponCostume, isRefined)
 
      embeds.set('weapon_info', weaponEmbed)
 
@@ -175,7 +188,7 @@ export default class Weapon implements BaseDiscordCommand {
     if (weaponCostume?.costume_id) {
       const costumeDebrisData = await api.get(`/costume/debris/${weaponCostume.costume_id}`)
       const costumeDebris = costumeDebrisData?.data as debris
-      const costumeEmbed = getCostumeEmbed(weaponCostume, weapon, costumeDebris, awakeningStep)
+      const costumeEmbed = getCostumeEmbed(weaponCostume, weapon, costumeDebris, awakeningStep, isExalted)
       embeds.set('weapon_costume', costumeEmbed)
       options.push({
         label: this.optionsLabels.weapon_costume,
@@ -233,7 +246,8 @@ export default class Weapon implements BaseDiscordCommand {
 
     const message = await interaction.reply({
       embeds: [embeds.get(selectedView)],
-      components: embeds.size > 1 ? [row] : []
+      components: embeds.size > 1 ? [row] : [],
+      content: customMessage ? customMessage : undefined,
     })
 
     const collector = message.createMessageComponentCollector({
@@ -256,7 +270,8 @@ export default class Weapon implements BaseDiscordCommand {
 
       newInteraction.update({
         embeds: [embeds.get(value)],
-        components: embeds.size > 1 ? [row] : []
+        components: embeds.size > 1 ? [row] : [],
+        content: customMessage ? customMessage : undefined,
       })
     })
 

@@ -1,23 +1,26 @@
 import { CDN_URL, emojis, RARITY, WEAPON_TYPE } from "../config"
 import { EmbedBuilder } from "discord.js"
-import { ApiCostume, ApiWeapon } from "../.."
+import { ApiCostume, ApiWeapon, weapon_stat } from "../.."
 import urlSlug from 'slugg'
 
-export default function getWeaponEmbed(weapon: ApiWeapon, costume?: ApiCostume) {
+export default function getWeaponEmbed(weapon: ApiWeapon, costume?: ApiCostume, isRefined?: boolean) {
   const embed = new EmbedBuilder()
   const url = `https://nierrein.guide/weapons/${weapon.slug}`
 
-  let stats = weapon.weapon_stat
-    .filter((row) => !row.is_refined)
-    .pop();
-
-  const hasRefined = weapon.weapon_stat.find(
+  const hasRefining = weapon.weapon_stat.find(
     (row) => row.is_refined
   );
 
-  if (hasRefined) {
-    stats = hasRefined;
-  }
+  let stats = weapon.weapon_stat
+    .sort((a, b) => a.level - b.level)
+    .filter((row) => {
+      if (hasRefining && isRefined) {
+        return row.is_refined
+      } else {
+        return !row.is_refined
+      }
+    })
+    .pop();
 
   let description = ``
 
@@ -36,7 +39,7 @@ export default function getWeaponEmbed(weapon: ApiWeapon, costume?: ApiCostume) 
   }
 
   embed
-    .setTitle(`${emojis[weapon.weapon_type]} ${emojis[weapon.attribute]} ${weapon.name} (${new Array(RARITY[weapon.rarity]).fill('★').join('')})`)
+    .setTitle(`${isRefined ? emojis.refined : ''}${emojis[weapon.weapon_type]} ${emojis[weapon.attribute]} ${weapon.name} (${new Array(RARITY[weapon.rarity]).fill('★').join('')})`)
     .setURL(url)
     .setDescription(description.trim())
     .setThumbnail(`${CDN_URL}${weapon.image_path}standard.png`)

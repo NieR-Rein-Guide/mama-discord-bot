@@ -39,6 +39,8 @@ async function main() {
 }
 
 process.on('unhandledRejection', (error) => {
+  console.error(error)
+
   if (env.ERRORS_WEBHOOK_URL) {
     const embed = new EmbedBuilder()
       .setTitle('unhandledRejection')
@@ -46,8 +48,6 @@ process.on('unhandledRejection', (error) => {
       .setColor(Colors.Red)
 
     webhookClient.send({ embeds: [embed], content: '<@87250779408187392>' })
-  } else {
-    console.error(error)
   }
 })
 

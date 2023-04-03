@@ -42,6 +42,9 @@ export const emojis = {
   awakening4: '<:awakening4:1091093294487965756>',
   awakening5: '<:awakening5:1059525278587682826>',
 
+  // Refiend
+  refined: '<:refined:1092416919413473300>',
+
   // Stats
   positive: '<:positive:1060299535940853861>',
   negative: '<:negative:1060299546514686043>',

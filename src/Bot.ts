@@ -165,8 +165,10 @@ export default class Bot {
     try {
       await this.prerun()
       await this.client.login(this.apiKey)
+      console.log('Connected to Discord.')
     } catch (error) {
       console.error('Error while connecting to Discord :', error)
+      process.exit(1)
     }
   }
 }
