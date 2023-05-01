@@ -80,7 +80,7 @@ export default class Costume implements BaseDiscordCommand {
 
     if (costume.costume_ability_link[2]) {
       const awakeningAbility = costume.costume_ability_link[2]
-      costumeSkillsDescription += `\n\n${emojis.awakening3} \`Awakening Ability\`\n${emojis.ability} ${`[**${awakeningAbility.costume_ability.name}**](${urlSlug(awakeningAbility.costume_ability.name)}-${awakeningAbility.costume_ability.ability_id})\n${awakeningAbility.costume_ability.description}`}`
+      costumeSkillsDescription += `\n\n${emojis.awakening3} \`Awakening Ability\`\n${emojis.ability} ${`**${awakeningAbility.costume_ability.name}**\n${awakeningAbility.costume_ability.description}`}`
     }
 
     if (costumeDebris) {
