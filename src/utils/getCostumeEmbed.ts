@@ -33,7 +33,7 @@ export default function getCostumeEmbed(costume: ApiCostume, weapon?: ApiWeapon,
 
   if (costume.costume_ability_link[2]) {
     const awakeningAbility = costume.costume_ability_link[2]
-    description += `\n\n${emojis.awakening3} Awakening Ability: ${`[**${awakeningAbility.costume_ability.name}**](${urlSlug(awakeningAbility.costume_ability.name)}-${awakeningAbility.costume_ability.ability_id})`}\n${awakeningAbility.costume_ability.description}`
+    description += `\n\n${emojis.awakening3} Awakening Ability: ${`**${awakeningAbility.costume_ability.name}**`}\n${awakeningAbility.costume_ability.description}`
   }
 
   if (debris) {
