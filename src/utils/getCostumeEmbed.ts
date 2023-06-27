@@ -32,7 +32,7 @@ export default function getCostumeEmbed(costume: ApiCostume, weapon?: ApiWeapon,
     description += `\n${emojis.hp} +${stats.hp - defaultStats.hp} • ${emojis.atk} +${stats.atk - defaultStats.atk} • +${emojis.def} ${stats.vit - defaultStats.vit} • ${emojis.agility} +${stats.agi - defaultStats.agi} (${isExalted ? emojis.refined : ''}${awakeningStep > 0 ? emojis[`awakening${awakeningStep}`] : ''})`
   }
 
-  description += `\n${emojis.skill} Skill: __${costume.costume_skill_link[0].costume_skill.name}__ (Gauge ${costume.costume_skill_link[0].costume_skill.gauge_rise_speed})`
+  description += `\n${emojis.skill} Skill: __${costume.costume_skill_link[0].costume_skill.name}__ (Gauge ${costume.costume_skill_link[0].costume_skill.gauge_rise_speed}) [${costume.costume_skill_link[0].costume_skill.cooldown_time}-${costume.costume_skill_link[0].costume_skill.cooldown_time * 0.8}]`
 
   description += `\n${emojis.ability} Abilities: ${[...costume.costume_ability_link].splice(0, 2).map(ability => `[**${ability.costume_ability.name}**](https://nierrein.guide/ability/costume/${urlSlug(ability.costume_ability.name)}-${ability.costume_ability.ability_id})`).join(' • ')}`
 

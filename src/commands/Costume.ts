@@ -74,7 +74,7 @@ export default class Costume implements BaseDiscordCommand {
 
   static getCostumeSkillsEmbed(embed: EmbedBuilder, costume: ApiCostume, costumeDebris: debris) {
     let costumeSkillsDescription = ''
-    costumeSkillsDescription += `\`Skill\`\n${emojis.skill} __${costume.costume_skill_link[0].costume_skill.name}__ (Gauge ${costume.costume_skill_link[0].costume_skill.gauge_rise_speed})\n${costume.costume_skill_link[0].costume_skill.description}`
+    costumeSkillsDescription += `\`Skill\`\n${emojis.skill} __${costume.costume_skill_link[0].costume_skill.name}__ (Gauge ${costume.costume_skill_link[0].costume_skill.gauge_rise_speed}) [${costume.costume_skill_link[0].costume_skill.cooldown_time}-${costume.costume_skill_link[0].costume_skill.cooldown_time * 0.8}]\n${costume.costume_skill_link[0].costume_skill.description}`
 
     costumeSkillsDescription += `\n\n\`Abilities\`\n${[...costume.costume_ability_link].splice(0, 2).map(ability => `${emojis.ability} [**${ability.costume_ability.name}**](https://nierrein.guide/ability/costume/${urlSlug(ability.costume_ability.name)}-${ability.costume_ability.ability_id})\n${ability.costume_ability.description}`).join('\n')}`
 
