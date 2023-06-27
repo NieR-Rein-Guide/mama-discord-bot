@@ -357,12 +357,12 @@ export default class Costume implements BaseDiscordCommand {
           },
           {
             name: `${emojis[firstCharacterSlug]} ${emojis.awakening3} Awakening ability`,
-            value: `${`[**${firstAwakeningAbility.costume_ability.name}**](${urlSlug(firstAwakeningAbility.costume_ability.name)}-${firstAwakeningAbility.costume_ability.ability_id})`}\n${firstAwakeningAbility.costume_ability.description}`,
+            value: `${`**${firstAwakeningAbility.costume_ability.name}**`}\n${firstAwakeningAbility.costume_ability.description}`,
             inline: true,
           },
           {
             name: `Awakening ability ${emojis.awakening3} ${emojis[secondCharacterSlug]}`,
-            value: `${`[**${secondAwakeningAbility.costume_ability.name}**](${urlSlug(secondAwakeningAbility.costume_ability.name)}-${secondAwakeningAbility.costume_ability.ability_id})`}\n${secondAwakeningAbility.costume_ability.description}`,
+            value: `${`**${secondAwakeningAbility.costume_ability.name}**`}\n${secondAwakeningAbility.costume_ability.description}`,
             inline: true
           },
           {

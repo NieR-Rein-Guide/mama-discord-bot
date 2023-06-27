@@ -9,6 +9,10 @@ export default function getCostumeEmbed(costume: ApiCostume, weapon?: ApiWeapon,
 
   const { maxWithAsc } = getCostumeLevelsByRarity(costume.rarity);
   const selectedLevel = isExalted ? maxWithAsc + 10 : maxWithAsc;
+  const defaultStats = costume.costume_stat
+    .filter((stat) => stat.level === maxWithAsc)
+    .filter((row) => row.awakening_step === 0)
+    .pop()
   const stats = costume.costume_stat
     .filter((stat) => stat.level === selectedLevel)
     .sort((a, b) => a.awakening_step - b.awakening_step)
@@ -22,6 +26,11 @@ export default function getCostumeEmbed(costume: ApiCostume, weapon?: ApiWeapon,
   let description = ``
 
   description += `${emojis.hp} ${stats.hp} • ${emojis.atk} ${stats.atk} • ${emojis.def} ${stats.vit} • ${emojis.agility} ${stats.agi}`
+
+  // Add stats difference if awakening_step or exalt is enabled
+  if (awakeningStep > 0 || isExalted) {
+    description += `\n${emojis.hp} +${stats.hp - defaultStats.hp} • ${emojis.atk} +${stats.atk - defaultStats.atk} • +${emojis.def} ${stats.vit - defaultStats.vit} • ${emojis.agility} +${stats.agi - defaultStats.agi} (${isExalted ? emojis.refined : ''}${awakeningStep > 0 ? emojis[`awakening${awakeningStep}`] : ''})`
+  }
 
   description += `\n${emojis.skill} Skill: __${costume.costume_skill_link[0].costume_skill.name}__ (Gauge ${costume.costume_skill_link[0].costume_skill.gauge_rise_speed})`
 
