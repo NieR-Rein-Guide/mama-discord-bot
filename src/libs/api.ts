@@ -22,6 +22,11 @@ export async function getDataset() {
   const { data: costumesAbilities }: { data: costume_ability[] } = await api.get('/costume/abilities')
   const { data: weaponsAbilities }: { data: weapon_ability[] } = await api.get('/weapon/abilities')
 
+  console.log(`[Dataset] Loaded ${costumes.length} costumes.`)
+  console.log(`[Dataset] Loaded ${weapons.length} weapons.`)
+  console.log(`[Dataset] Loaded ${costumesAbilities.length} costumes abilities.`)
+  console.log(`[Dataset] Loaded ${weaponsAbilities.length} weapons abilities.`)
+
   if (costumes.length === 0 || weapons.length === 0) {
     throw new Error('Costumes or Weapons are empty.')
   }

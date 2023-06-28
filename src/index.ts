@@ -15,6 +15,7 @@ import {
 } from './commands'
 import { getDataset } from './libs/api'
 import { EmbedBuilder } from '@discordjs/builders'
+import { updateDocuments } from './libs/meilisearch'
 
 const webhookClient = new WebhookClient({
   url: env.ERRORS_WEBHOOK_URL
@@ -36,6 +37,10 @@ async function main() {
     .addCommand(new Compare(costumes, weapons, costumesSearch, weaponsSearch))
     .addCommand(new Search(costumes, weapons, costumesAbilities, weaponsAbilities))
     .run()
+
+    if (env.MEILISEARCH_MASTER_KEY) {
+      updateDocuments(costumes, weapons)
+    }
 }
 
 process.on('unhandledRejection', (error) => {

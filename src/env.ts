@@ -22,4 +22,8 @@ export const env = envsafe({
     desc: 'The Discord Webhook URL to send errors to.',
     allowEmpty: true,
   }),
+  MEILISEARCH_MASTER_KEY: str({
+    desc: 'Meilisearch Master Key to update documents.',
+    allowEmpty: true,
+  }),
 });
