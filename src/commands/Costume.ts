@@ -6,6 +6,7 @@ import { CDN_URL, emojis, FEATURED_TIERLISTS, RARITY } from '../config'
 import api from '../libs/api'
 import getWeaponEmbed from '../utils/getWeaponEmbed'
 import urlSlug from 'slugg'
+import Fuse from 'fuse.js'
 import Weapon from './Weapon'
 
 export default class Costume implements BaseDiscordCommand {
@@ -41,7 +42,8 @@ export default class Costume implements BaseDiscordCommand {
         option.setName('is_exalted')
           .setDescription('Whether or not to show exalted stats (default: no exalt)'))
 
-  costumes: ApiCostume[] = []
+  costumes: ApiCostume[] = [];
+  characters: string[] = [];
   index: BotIndexes['costumesSearch']
   optionsLabels = {
     costume_info: '🧑 View Costume',
@@ -56,6 +58,14 @@ export default class Costume implements BaseDiscordCommand {
 
   constructor(costumes: ApiCostume[], index: BotIndexes['costumesSearch']) {
     this.costumes = costumes;
+    this.characters = costumes.reduce((characters, costume) => {
+      if (characters.includes(costume.character.name.toLowerCase())) {
+        return characters;
+      }
+
+      characters.push(costume.character.name.toLowerCase());
+      return characters;
+    }, [])
     this.index = index;
   }
 
@@ -96,6 +106,13 @@ export default class Costume implements BaseDiscordCommand {
     const selectedView = interaction.options.getString('view') || 'costume_info'
     const awakeningStep = interaction.options.getNumber('awakening_step') || 0
     const isExalted = interaction.options.getBoolean('is_exalted')
+    let hasCharacterName = ''
+
+    const match = new RegExp(this.characters.join("|"))
+    .exec(id.toLowerCase())
+    if (match && match.length > 0) {
+      hasCharacterName = match[0]
+    }
 
     const options = [
       {
@@ -114,11 +131,26 @@ export default class Costume implements BaseDiscordCommand {
     let costume = this.costumes.find((costume) => `${costume.costume_id}` === id)
 
     if (!costume) {
-      const [firstResult] = this.index.search(id)
+      let result: ApiCostume;
+      if (hasCharacterName) {
+        const costumesOfCharacter = this.costumes.filter((costume) => costume.character.name.toLowerCase() === hasCharacterName)
+        const customIndex = new Fuse(costumesOfCharacter, {
+          keys: ['title'],
+          includeScore: true,
+        })
+
+        const needle = id.toLowerCase().replace(hasCharacterName, '');
+
+        const [firstResult] = customIndex.search(needle);
+        result = firstResult.item;
+      } else {
+        const [firstResult] = this.index.search(id)
+        result = firstResult.item;
+      }
 
       customMessage = `Closest match for custom keyword: \`${id}\``;
 
-      if (!firstResult) {
+      if (!result) {
         const embed = new EmbedBuilder()
           .setDescription(`I am sorry, Mama could not find anything useful for \`${id}\``)
           .setColor(Colors.Red)
@@ -132,7 +164,7 @@ export default class Costume implements BaseDiscordCommand {
         return
       }
 
-      costume = firstResult.item as ApiCostume
+      costume = result;
     }
 
     console.log(`${interaction.user.username}#${interaction.user.discriminator} used "/costume <${id}> <${selectedView}>" to reference ${costume?.character?.name} - ${costume?.title} [in Guild:${interaction.guild?.name}]`)
