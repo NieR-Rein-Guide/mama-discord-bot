@@ -226,7 +226,10 @@ export default class Weapon implements BaseDiscordCommand {
           value: `Start: <t:${new Date(source.attributes.start_date).getTime() / 1000}:R>\nEnd: <t:${new Date(source.attributes.end_date).getTime() / 1000}:R>`,
         }))
       )
-      weaponSourcesEmbed.setImage(weaponSources[0].attributes.image.data.attributes.url)
+
+      if (weaponSources?.[0]?.attributes?.image?.data?.attributes?.url) {
+        weaponSourcesEmbed.setImage(weaponSources?.[0]?.attributes?.image?.data?.attributes?.url)
+      }
 
       embeds.set('weapon_sources', weaponSourcesEmbed)
       options.push({

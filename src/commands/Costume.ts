@@ -190,7 +190,9 @@ export default class Costume implements BaseDiscordCommand {
         value: `Start: <t:${new Date(source.attributes.start_date).getTime() / 1000}:R>\nEnd: <t:${new Date(source.attributes.end_date).getTime() / 1000}:R>`,
       }))
     )
-    costumeSourcesEmbed.setImage(costumeSources[0].attributes.image.data.attributes.url)
+    if (costumeSources?.[0]?.attributes?.image?.data?.attributes?.url) {
+      costumeSourcesEmbed.setImage(costumeSources?.[0]?.attributes?.image?.data?.attributes?.url)
+    }
 
     embeds.set('costume_sources', costumeSourcesEmbed)
      options.push({
