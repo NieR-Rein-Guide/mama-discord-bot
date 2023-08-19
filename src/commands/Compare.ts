@@ -425,6 +425,38 @@ export default class Costume implements BaseDiscordCommand {
       .setDescription(description)
       .setColor(Colors.Blurple)
       .addFields([
+        // First item Skill 1
+        {
+          name: `Skill 1`,
+          value: `${emojis.skill} **${firstWeapon.weapon_skill_link[0].weapon_skill.name}**\n${firstWeapon.weapon_skill_link[0].weapon_skill.short_description}`,
+          inline: true,
+        },
+        // Second item Skill 1
+        {
+          name: `Skill 1`,
+          value: `${emojis.skill} **${secondWeapon.weapon_skill_link[0].weapon_skill.name}**\n${secondWeapon.weapon_skill_link[0].weapon_skill.short_description}`,
+          inline: true,
+        },
+        {
+          name: `Skill 2`,
+          value: '-',
+        },
+        // First item Skill 2
+        {
+          name: `Skill 2`,
+          value: `${emojis.skill} **${firstWeapon.weapon_skill_link[1].weapon_skill.name}**\n${firstWeapon.weapon_skill_link[1].weapon_skill.short_description}`,
+          inline: true,
+        },
+        // Second item Skill 2
+        {
+          name: `Skill 2`,
+          value: `${emojis.skill} **${secondWeapon.weapon_skill_link[1].weapon_skill.name}**\n${secondWeapon.weapon_skill_link[1].weapon_skill.short_description}`,
+          inline: true,
+        },
+        {
+          name: `Abilities`,
+          value: '-',
+        },
         // First item ability
         {
           name: `${emojis[firstWeapon.weapon_type]}${emojis[firstWeapon.attribute]} Abilities`,
