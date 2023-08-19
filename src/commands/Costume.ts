@@ -102,7 +102,7 @@ export default class Costume implements BaseDiscordCommand {
   }
 
   async run (interaction: ChatInputCommandInteraction): Promise<void> {
-    const id = interaction.options.getString('name')
+    const id = interaction.options.getString('name').trim()
     const selectedView = interaction.options.getString('view') || 'costume_info'
     const awakeningStep = interaction.options.getNumber('awakening_step') || 0
     const isExalted = interaction.options.getBoolean('is_exalted')
@@ -128,7 +128,13 @@ export default class Costume implements BaseDiscordCommand {
     /**
      * Costume
      */
-    let costume = this.costumes.find((costume) => `${costume.costume_id}` === id)
+    let costume = this.costumes.find((costume) => {
+      if (costume.title.toLowerCase() === id.toLowerCase()) {
+        return true
+      } else {
+        return `${costume.costume_id}` === id
+      }
+    })
 
     if (!costume) {
       let result: ApiCostume;
