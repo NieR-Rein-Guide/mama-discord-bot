@@ -216,8 +216,6 @@ export default class Costume implements BaseDiscordCommand {
             .map((item) => `✧ ${item.text}\n`)}`.replaceAll(',', '')
       })))
 
-      console.log(costumeKarma[0].karma_items)
-
       embeds.set('karma', costumeKarmaEmbed)
       options.push({
         label: this.optionsLabels.karma,
