@@ -34,7 +34,6 @@ export default class Bot {
     this.client.on('guildCreate', this.onGuildCreate)
     this.client.on('guildDelete', this.onGuildDelete)
     this.client.on('interactionCreate', this.onInteractionCreate)
-    this.client.on('messageCreate', this.messageCreate)
   }
 
   /**
@@ -88,16 +87,6 @@ export default class Bot {
       console.log('Successfully reloaded application (/) commands.')
     } catch (error) {
       console.error(error)
-    }
-  }
-
-  messageCreate = async (message: Message): Promise<any> => {
-    let matches = [...message.content.matchAll(formatRegex)]
-
-    if (matches?.length > 0 ) {
-      message.reply({
-        content: `I am sorry but Mama doesn't want to support message commands anymore.\n${emojis.mamaDirect} Please use either \`/costume <name> <?view>\` or \`/weapon <name> <?view>\` to view your desired costume/weapon. (:gift: bonus: You can benefit from more features by using slash commands!)\n\n Thank you for your understanding bestie! ${emojis.mamaPlease}`,
-      }).catch(() => console.warn(`Could not reply to ${message.member.user.toString()} in ${message.channelId} in guild ${message.guildId}`))
     }
   }
 

@@ -317,6 +317,23 @@ export type weapon_story_link = {
   weapon_story_id: number
 }
 
+/**
+ * Model costume_karma_slot
+ *
+ */
+export type costume_karma_slot = {
+  costume_id: number
+  order: number
+  release_time: Date
+  karma_items: karma_items[] | null
+}
+
+export type karma_items = {
+  rarity: string;
+  text: string;
+  order: number;
+}
+
 export type ApiCostume = (costume & {
   character: character;
   costume_ability_link: (costume_ability_link & {
@@ -326,6 +343,7 @@ export type ApiCostume = (costume & {
       costume_skill: costume_skill;
   })[];
   costume_stat: costume_stat[];
+  costume_karma_slot: costume_karma_slot[];
 })
 
 export type ApiWeapon = (weapon & {

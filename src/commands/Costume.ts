@@ -25,6 +25,7 @@ export default class Costume implements BaseDiscordCommand {
             .addChoices(
               { name: '🧑 Costume', value: 'costume_info' },
               { name: '📜Costume skills and abilities', value: 'costume_skills' },
+              { name: '🪞 Karma', value: 'karma' },
               { name: '⚔️ Costume weapon', value: 'costume_weapon' },
               { name: '⚔️📜 View Weapon skills and abilities', value: 'weapon_skills' },
               { name: '📊 Tierlist', value: 'tierlist_info' },
@@ -54,6 +55,7 @@ export default class Costume implements BaseDiscordCommand {
     costume_sources: '📍 View costume sources',
     costume_story: '📚 View costume story',
     costume_artwork: '🖼️ View costume full artwork',
+    karma: '🪞 Karma',
   }
 
   constructor(costumes: ApiCostume[], index: BotIndexes['costumesSearch']) {
@@ -198,6 +200,31 @@ export default class Costume implements BaseDiscordCommand {
       description: 'Costume skill and abilities',
       value: 'costume_skills',
     })
+
+    /**
+     * Costume karma
+     */
+    if (costume.costume_karma_slot?.length > 0) {
+      const costumeKarma = costume.costume_karma_slot.sort((a, b) => a.order - b.order)
+      const costumeKarmaEmbed = EmbedBuilder.from(costumeEmbed)
+      costumeKarmaEmbed.setDescription(`Karma for this costume released: <t:${new Date(costumeKarma[0].release_time).getTime() / 1000}:R>`)
+      costumeKarmaEmbed.addFields(costumeKarma.map((slot) => ({
+        name: `Slot n°${slot.order}`,
+        value: `${slot.karma_items
+            .filter((item) => item.rarity === 'SS_RARE')
+            .sort((a, b) => a.order - b.order)
+            .map((item) => `✧ ${item.text}\n`)}`.replaceAll(',', '')
+      })))
+
+      console.log(costumeKarma[0].karma_items)
+
+      embeds.set('karma', costumeKarmaEmbed)
+      options.push({
+        label: this.optionsLabels.karma,
+        description: 'View costume karma',
+        value: 'karma',
+      })
+    }
 
     /**
      * Costume story
